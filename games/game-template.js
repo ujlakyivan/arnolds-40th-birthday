@@ -34,16 +34,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create the development message on page load
     createDevMessage();
     
-    // Handle back button click with improved path handling
+    // Handle back button click with fixed navigation for GitHub Pages
     backButton.addEventListener('click', () => {
-        // Using the base href to navigate back to root
-        const baseElement = document.querySelector('base');
-        if (baseElement && baseElement.getAttribute('href')) {
-            // Navigate to the index.html in the base folder
-            window.location.href = baseElement.getAttribute('href') + 'index.html';
+        // Get repository name from the current URL
+        const currentUrl = window.location.href;
+        const urlParts = currentUrl.split('/');
+        
+        // Find the index of 'games' in the path
+        const gamesIndex = urlParts.findIndex(part => part === 'games');
+        
+        // Create the correct base URL by removing game-specific parts
+        if (gamesIndex > 0) {
+            // Go up two levels from the game directory
+            const baseUrl = urlParts.slice(0, gamesIndex).join('/');
+            window.location.href = `${baseUrl}/index.html`;
         } else {
-            // Fallback to direct path if no base tag
-            window.location.href = '../../index.html';
+            // Fallback to relative navigation if path structure is different
+            const baseTag = document.querySelector('base');
+            if (baseTag && baseTag.href) {
+                window.location.href = new URL('index.html', baseTag.href).href;
+            } else {
+                window.location.href = '../../index.html';
+            }
         }
     });
     

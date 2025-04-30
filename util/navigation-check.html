@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="../">
+    <title>Navigation Path Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .test-buttons {
+            margin: 20px 0;
+        }
+        
+        h1, h2 {
+            color: #333;
+        }
+        
+        .code {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Navigation Path Checker</h1>
+    <p>This utility helps diagnose and fix navigation issues with GitHub Pages deployment.</p>
+    
+    <div class="result">
+        <h2>Current URL Information</h2>
+        <pre id="url-info"></pre>
+    </div>
+    
+    <div class="test-buttons">
+        <h2>Test Navigation Paths</h2>
+        <button id="test-back">Test Back Navigation</button>
+        <button id="test-main">Navigate to Main Page</button>
+        <button id="test-game">Navigate to Quiz Game</button>
+    </div>
+    
+    <div class="result">
+        <h2>Navigation Code for Back Button</h2>
+        <p>Copy this into <span class="code">games/game-template.js</span> to fix back button navigation:</p>
+        <pre>
+backButton.addEventListener('click', () => {
+    // Get repository name from the current URL
+    const currentUrl = window.location.href;
+    const urlParts = currentUrl.split('/');
+    
+    // Find the index of 'games' in the path
+    const gamesIndex = urlParts.findIndex(part => part === 'games');
+    
+    // Create the correct base URL by removing game-specific parts
+    if (gamesIndex > 0) {
+        // Go up two levels from the game directory
+        const baseUrl = urlParts.slice(0, gamesIndex).join('/');
+        window.location.href = `${baseUrl}/index.html`;
+    } else {
+        // Fallback to relative navigation if path structure is different
+        const baseTag = document.querySelector('base');
+        if (baseTag && baseTag.href) {
+            window.location.href = new URL('index.html', baseTag.href).href;
+        } else {
+            window.location.href = '../../index.html';
+        }
+    }
+});</pre>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlInfo = document.getElementById('url-info');
+            const testBackButton = document.getElementById('test-back');
+            const testMainButton = document.getElementById('test-main');
+            const testGameButton = document.getElementById('test-game');
+            
+            // Display current URL information
+            function updateUrlInfo() {
+                const currentUrl = window.location.href;
+                const urlParts = currentUrl.split('/');
+                const baseTag = document.querySelector('base');
+                
+                let info = `Current URL: ${currentUrl}\n`;
+                info += `URL Parts: ${JSON.stringify(urlParts, null, 2)}\n`;
+                info += `Base Tag: ${baseTag ? baseTag.href : 'None'}\n`;
+                
+                // Calculate what the back navigation should be
+                const gamesIndex = urlParts.findIndex(part => part === 'games');
+                let backUrl = '../../index.html';
+                if (gamesIndex > 0) {
+                    const baseUrl = urlParts.slice(0, gamesIndex).join('/');
+                    backUrl = `${baseUrl}/index.html`;
+                } else if (baseTag && baseTag.href) {
+                    backUrl = new URL('index.html', baseTag.href).href;
+                }
+                
+                info += `\nCalculated Back URL: ${backUrl}`;
+                urlInfo.textContent = info;
+            }
+            
+            updateUrlInfo();
+            
+            // Test the back navigation logic
+            testBackButton.addEventListener('click', () => {
+                const currentUrl = window.location.href;
+                const urlParts = currentUrl.split('/');
+                
+                // Find the index of 'games' or 'util' in the path
+                const pathIndex = urlParts.findIndex(part => part === 'games' || part === 'util');
+                
+                // Create the correct base URL
+                if (pathIndex > 0) {
+                    const baseUrl = urlParts.slice(0, pathIndex).join('/');
+                    window.location.href = `${baseUrl}/index.html`;
+                } else {
+                    // Fallback
+                    const baseTag = document.querySelector('base');
+                    if (baseTag && baseTag.href) {
+                        window.location.href = new URL('index.html', baseTag.href).href;
+                    } else {
+                        window.location.href = '../index.html';
+                    }
+                }
+            });
+            
+            // Navigate to main page
+            testMainButton.addEventListener('click', () => {
+                const baseTag = document.querySelector('base');
+                if (baseTag && baseTag.href) {
+                    window.location.href = baseTag.href;
+                } else {
+                    window.location.href = '../';
+                }
+            });
+            
+            // Navigate to a game page
+            testGameButton.addEventListener('click', () => {
+                const baseTag = document.querySelector('base');
+                if (baseTag && baseTag.href) {
+                    window.location.href = new URL('games/quiz/', baseTag.href).href;
+                } else {
+                    window.location.href = '../games/quiz/';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
