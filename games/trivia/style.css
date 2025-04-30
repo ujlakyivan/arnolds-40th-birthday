@@ -1,0 +1,256 @@
+/* World of Warcraft Trivia Game Styles */
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #0c0d10;
+    color: #f0e6d2;
+    font-family: 'Arial', sans-serif;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #1e2328;
+    border-bottom: 2px solid #785a28;
+}
+
+.back-button {
+    background-color: #1e2328;
+    border: 1px solid #785a28;
+    color: #c8aa6e;
+}
+
+.back-button:hover {
+    background-color: #2a2c31;
+}
+
+.game-header h1 {
+    color: #c8aa6e;
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.game-content {
+    flex-grow: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.trivia-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #c8aa6e;
+    transform: scale(1);
+    transition: transform 0.3s ease;
+}
+
+.start-button {
+    margin-top: 2rem;
+    padding: 10px 20px;
+    background-color: #1e2328;
+    color: #c8aa6e;
+    border: 1px solid #785a28;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.start-button:hover {
+    background-color: #2a2c31;
+}
+
+/* Trivia Game UI */
+.wow-trivia-game {
+    width: 100%;
+    max-width: 600px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+.wow-trivia-game.active {
+    display: flex;
+}
+
+.question-container {
+    width: 100%;
+    border: 1px solid #785a28;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: rgba(30, 35, 40, 0.9);
+    text-align: center;
+}
+
+.character-portrait {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #785a28;
+    margin-bottom: 15px;
+    background-position: center;
+    background-size: cover;
+    margin: 0 auto 15px;
+}
+
+.question-text {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #f0e6d2;
+}
+
+.options-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.option-button {
+    padding: 10px;
+    background-color: #1e2328;
+    border: 1px solid #785a28;
+    color: #c8aa6e;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s ease;
+}
+
+.option-button:hover {
+    background-color: #2a2c31;
+}
+
+.option-button.correct {
+    background-color: #2b7254;
+    border-color: #3aa17d;
+    color: white;
+}
+
+.option-button.incorrect {
+    background-color: #aa3a3a;
+    border-color: #d16969;
+    color: white;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.next-button {
+    padding: 10px 20px;
+    background-color: #1e2328;
+    color: #c8aa6e;
+    border: 1px solid #785a28;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.next-button:hover {
+    background-color: #2a2c31;
+}
+
+.timer {
+    height: 10px;
+    width: 100%;
+    background-color: #2a2c31;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.timer-fill {
+    height: 100%;
+    background-color: #c8aa6e;
+    width: 100%;
+    transition: width 1s linear;
+}
+
+.score {
+    color: #c8aa6e;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.result-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.result-container.active {
+    display: flex;
+}
+
+.result-title {
+    color: #c8aa6e;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.result-score {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+}
+
+.result-message {
+    margin-bottom: 30px;
+}
+
+.replay-button {
+    padding: 10px 20px;
+    background-color: #1e2328;
+    color: #c8aa6e;
+    border: 1px solid #785a28;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.replay-button:hover {
+    background-color: #2a2c31;
+}
+
+.loading-container {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.loading-container.active {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #1e2328;
+    border-top: 5px solid #c8aa6e;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #c8aa6e;
+}

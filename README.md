@@ -8,8 +8,52 @@ This application is designed to provide a fun and interactive way to celebrate A
 ## Features
 - **Mobile-first responsive design**: Optimized for mobile devices.
 - **Basic authentication**: Secure login for users.
-- **Mini-games**: A 2x5 grid of engaging games.
+- **10 Mini-games**: A collection of engaging games including:
+  - Balloon
+  - Cake
+  - Clicker
+  - Hunt
+  - Memory
+  - Puzzle
+  - Quiz
+  - Racer
+  - Trivia
+  - Words
 - **Lightweight implementation**: Fast and efficient performance.
+
+## Project Structure
+```
+index.html                  # Main application entry point
+scripts/                    # JavaScript files
+  app.js                    # Main application logic
+  auth.js                   # Authentication functionality
+  games.js                  # Games configuration and management
+  utils.js                  # Utility functions
+styles/                     # CSS stylesheets
+  main.css                  # Main application styles
+  auth.css                  # Authentication styles
+  games.css                 # Game grid styles
+games/                      # Individual game implementations
+  game-template.css         # Common styling for games
+  game-template.js          # Common functionality for games
+  check-paths.html          # Tool to verify game paths
+  balloon/                  # Balloon game
+  cake/                     # Cake game
+  clicker/                  # Clicker game
+  hunt/                     # Hunt game
+  memory/                   # Memory game
+  puzzle/                   # Puzzle game
+  quiz/                     # Quiz game
+  racer/                    # Racer game
+  trivia/                   # Trivia game
+  words/                    # Words game
+assets/                     # Static assets
+  muradin.jpg               # Image asset
+server/                     # Server-side code
+  server.js                 # Server implementation
+util/                       # Utility tools
+  navigation-check.html     # Navigation verification tool
+```
 
 ## Getting Started
 
@@ -32,7 +76,12 @@ npm install
 npm start
 ```
 
-## Manual GitHub Pages Deployment
+## Development Notes
+- Each game is implemented in its own directory under `/games/`
+- Common game styling and functionality is in the template files
+- The main application uses the scripts in the `/scripts/` directory to manage games and authentication
+
+## GitHub Pages Deployment
 
 To deploy this app to GitHub Pages:
 
