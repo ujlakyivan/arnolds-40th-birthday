@@ -5,6 +5,12 @@
 
 // Initialize when document is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // First, remove any previous click event listeners from the start button
+    // by cloning and replacing it (this will remove the development message handler)
+    const startButton = document.querySelector('.start-button');
+    const newStartButton = startButton.cloneNode(true);
+    startButton.parentNode.replaceChild(newStartButton, startButton);
+    
     // Game state
     const gameState = {
         currentQuestion: 0,
@@ -21,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingContainer: document.querySelector('.loading-container'),
         gameContainer: document.querySelector('.wow-trivia-game'),
         resultContainer: document.querySelector('.result-container'),
-        startButton: document.querySelector('.start-button'),
+        startButton: newStartButton,
         nextButton: document.getElementById('next-button'),
         replayButton: document.querySelector('.replay-button'),
         questionText: document.getElementById('question-text'),
@@ -32,8 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         finalScore: document.getElementById('final-score'),
         finalTotal: document.getElementById('final-total'),
         resultMessage: document.getElementById('result-message'),
-        timerFill: document.querySelector('.timer-fill'),
-        devMessage: document.querySelector('.development-message')
+        timerFill: document.querySelector('.timer-fill')
     };
 
     // Event listeners
