@@ -26,6 +26,25 @@ This project is set up with GitHub Actions for automatic deployment to GitHub Pa
 
 3. Check deployment status in the "Actions" tab of your GitHub repository
 
+## Troubleshooting Deployment Issues
+
+If you encounter deployment errors (like exit code 128):
+
+1. Check repository permissions:
+   - Go to Settings > Actions > General
+   - Under "Workflow permissions", select "Read and write permissions"
+   - Save changes
+
+2. Try the alternative deployment workflow:
+   - Rename `.github/workflows/deploy-alternative.yml` to `.github/workflows/deploy.yml`
+   - Push the changes to trigger a new deployment
+
+3. Manual deployment option:
+   - In your repository Settings > Pages
+   - Set Source to "GitHub Actions"
+   - If needed, create a personal access token with repo permissions
+   - Add it in Settings > Secrets > Actions as `DEPLOY_TOKEN`
+
 ## Manual Deployment Steps
 
 If you need to deploy manually:

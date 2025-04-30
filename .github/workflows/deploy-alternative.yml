@@ -1,0 +1,132 @@
+name: Deploy to GitHub Pages Alternative
+
+on:
+  push:
+    branches:
+      - main  # Change to master if that's your default branch name
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          
+      - name: Install Dependencies
+        run: |
+          npm init -y
+          npm install fs-extra
+
+      - name: Create .nojekyll file
+        run: touch .nojekyll
+
+      - name: Fix Paths for GitHub Pages
+        run: |
+          # Create path fixing script
+          mkdir -p tools
+          cat > tools/fix-paths.js << 'EOL'
+          const fs = require('fs-extra');
+          const path = require('path');
+          
+          // Function to recursively process files and fix paths
+          function processFiles(directory) {
+            fs.readdirSync(directory).forEach(item => {
+              const fullPath = path.join(directory, item);
+              const stats = fs.statSync(fullPath);
+              
+              if (stats.isDirectory() && !['node_modules', '.git', '.github'].includes(item)) {
+                processFiles(fullPath);
+                return;
+              }
+              
+              if (!stats.isFile()) return;
+              
+              // Process HTML, CSS, and JS files
+              if (['.html', '.css', '.js'].includes(path.extname(fullPath))) {
+                try {
+                  let content = fs.readFileSync(fullPath, 'utf8');
+                  let modified = false;
+                  
+                  // Fix paths in HTML files
+                  if (path.extname(fullPath) === '.html') {
+                    // Add base tag if missing
+                    if (!content.includes('<base href=') && content.includes('<head>')) {
+                      if (fullPath.includes('/games/') && fullPath.includes('/index.html')) {
+                        content = content.replace('<head>', '<head>\n  <base href="../../">');
+                      } else {
+                        content = content.replace('<head>', '<head>\n  <base href="./">');
+                      }
+                      modified = true;
+                    }
+                    
+                    // Fix absolute paths
+                    const newContent = content.replace(/href=["']\/(?!\/|http|https)([^"']*)["']/g, 'href="./$1"')
+                                            .replace(/src=["']\/(?!\/|http|https)([^"']*)["']/g, 'src="./$1"');
+                    
+                    if (newContent !== content) {
+                      content = newContent;
+                      modified = true;
+                    }
+                  }
+                  
+                  // Fix paths in JavaScript files
+                  if (path.extname(fullPath) === '.js') {
+                    const newContent = content.replace(/window\.location\.href\s*=\s*['"]\/['"]/g, 'window.location.href = "./index.html"');
+                    if (newContent !== content) {
+                      content = newContent;
+                      modified = true;
+                    }
+                  }
+                  
+                  if (modified) {
+                    console.log(`Fixed paths in: ${fullPath}`);
+                    fs.writeFileSync(fullPath, content, 'utf8');
+                  }
+                } catch (err) {
+                  console.error(`Error processing ${fullPath}: ${err.message}`);
+                }
+              }
+            });
+          }
+          
+          console.log('Starting path fixing...');
+          processFiles('.');
+          console.log('Path fixing completed!');
+          EOL
+          
+          # Run the path fixing script
+          node tools/fix-paths.js
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+        env:
+          JEKYLL_ENV: production
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./_site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
