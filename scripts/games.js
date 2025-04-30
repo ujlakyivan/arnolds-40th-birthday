@@ -1,6 +1,6 @@
 class Games {
     constructor() {
-        this.gamesContainer = document.querySelector('.games-grid');
+        // Game data
         this.games = [
             { id: 1, title: 'Birthday Quiz', image: 'quiz.png', path: 'games/quiz/', emoji: '🎓' },
             { id: 2, title: 'Memory Match', image: 'memory.png', path: 'games/memory/', emoji: '🃏' },
@@ -14,25 +14,56 @@ class Games {
             { id: 10, title: 'Cake Builder', image: 'cake.png', path: 'games/cake/', emoji: '🎂' }
         ];
         
+        // Cache DOM elements
+        this.elements = {
+            gamesContainer: document.querySelector('.games-grid')
+        };
+        
+        this.init();
+    }
+    
+    init() {
         this.loadGames();
     }
     
     loadGames() {
-        this.gamesContainer.innerHTML = '';
+        if (!this.elements.gamesContainer) return;
+        
+        this.elements.gamesContainer.innerHTML = '';
         
         this.games.forEach(game => {
             const gameElement = this.createGameElement(game);
-            this.gamesContainer.appendChild(gameElement);
+            this.elements.gamesContainer.appendChild(gameElement);
         });
     }
     
     createGameElement(game) {
+        // Create game tile element
         const gameDiv = document.createElement('div');
         gameDiv.className = 'game-tile';
         gameDiv.dataset.gameId = game.id;
         
-        // Use emoji instead of colored background
+        // Create emoji icon container
+        const iconContainer = this.createEmojiIcon(game);
+        
+        // Create title element
+        const title = document.createElement('div');
+        title.className = 'game-title';
+        title.textContent = game.title;
+        
+        // Assemble the game tile
+        gameDiv.appendChild(iconContainer);
+        gameDiv.appendChild(title);
+        
+        // Add click event
+        gameDiv.addEventListener('click', () => this.launchGame(game));
+        
+        return gameDiv;
+    }
+    
+    createEmojiIcon(game) {
         const imgPlaceholder = document.createElement('div');
+        imgPlaceholder.className = 'game-emoji-icon';
         imgPlaceholder.style.width = '60%';
         imgPlaceholder.style.height = '60%';
         imgPlaceholder.style.display = 'flex';
@@ -40,79 +71,121 @@ class Games {
         imgPlaceholder.style.justifyContent = 'center';
         imgPlaceholder.style.fontSize = '2.5rem';
         imgPlaceholder.style.marginBottom = '10px';
-        imgPlaceholder.innerHTML = game.emoji || '';
+        imgPlaceholder.innerHTML = game.emoji || '🎮';
         
-        const title = document.createElement('div');
-        title.className = 'game-title';
-        title.textContent = game.title;
-        
-        gameDiv.appendChild(imgPlaceholder);
-        gameDiv.appendChild(title);
-        
-        gameDiv.addEventListener('click', () => this.launchGame(game));
-        
-        return gameDiv;
+        return imgPlaceholder;
     }
     
     launchGame(game) {
         // Save the current game ID in sessionStorage
-        sessionStorage.setItem('currentGame', game.id);
+        StorageUtils.saveToStorage('currentGame', game.id);
         
-        // Either navigate to the game page or load it in a modal/iframe
+        // Check if game path exists
         if (game.path) {
-            // Get base href if it exists
-            const baseElement = document.querySelector('base');
-            const basePath = baseElement ? baseElement.getAttribute('href') || '' : '';
-            
-            // Apply basePath if not already in the game.path
-            if (game.path.startsWith('/')) {
-                window.location.href = basePath + game.path.substring(1);
-            } else {
-                window.location.href = basePath + game.path;
-            }
+            this.navigateToGamePath(game);
         } else {
             this.showDevelopmentMessage(game);
         }
     }
     
+    navigateToGamePath(game) {
+        // Use PathUtils instead of manual path construction
+        const gamePath = PathUtils.combinePath(game.path);
+        window.location.href = gamePath;
+    }
+    
     showDevelopmentMessage(game) {
-        // Create an overlay message if it doesn't exist
+        // Remove existing message if present
         const existingMessage = document.getElementById('dev-message-overlay');
         if (existingMessage) {
             existingMessage.remove();
         }
         
+        // Create message overlay
         const messageOverlay = document.createElement('div');
         messageOverlay.id = 'dev-message-overlay';
-        messageOverlay.style.position = 'fixed';
-        messageOverlay.style.top = '0';
-        messageOverlay.style.left = '0';
-        messageOverlay.style.width = '100%';
-        messageOverlay.style.height = '100%';
-        messageOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-        messageOverlay.style.display = 'flex';
-        messageOverlay.style.flexDirection = 'column';
-        messageOverlay.style.justifyContent = 'center';
-        messageOverlay.style.alignItems = 'center';
-        messageOverlay.style.zIndex = '1000';
-        messageOverlay.style.padding = '20px';
-        messageOverlay.style.color = 'white';
+        messageOverlay.className = 'dev-message-overlay';
         
+        // Create message container with content
         messageOverlay.innerHTML = `
-            <div style="background-color: #2c3e50; padding: 30px; border-radius: 10px; text-align: center; max-width: 80%;">
-                <div style="font-size: 3rem; margin-bottom: 20px;">${game.emoji || '🎮'}</div>
-                <h2 style="font-size: 1.5rem; margin-bottom: 15px;">Game Under Development</h2>
-                <p style="margin-bottom: 20px;">"${game.title}" is currently under development for Arnold's 40th birthday celebration.</p>
-                <button id="close-dev-message" style="padding: 10px 20px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+            <div class="dev-message-container">
+                <div class="dev-message-emoji">${game.emoji || '🎮'}</div>
+                <h2 class="dev-message-title">Game Under Development</h2>
+                <p class="dev-message-text">"${game.title}" is currently under development for Arnold's 40th birthday celebration.</p>
+                <button id="close-dev-message" class="dev-message-button">Close</button>
             </div>
         `;
         
-        document.body.appendChild(messageOverlay);
-        document.body.style.overflow = 'hidden';  // Prevent scrolling
+        // Apply inline styles
+        this.applyDevMessageStyles(messageOverlay);
         
+        // Add to DOM and prevent scrolling
+        document.body.appendChild(messageOverlay);
+        document.body.style.overflow = 'hidden';
+        
+        // Add close button event
         document.getElementById('close-dev-message').addEventListener('click', () => {
             messageOverlay.remove();
-            document.body.style.overflow = '';  // Restore scrolling
+            document.body.style.overflow = '';
+            UIUtils.showNotification('Coming soon!', 'info', 2000);
         });
+    }
+    
+    applyDevMessageStyles(overlay) {
+        // Apply overlay styles
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.zIndex = '1000';
+        overlay.style.padding = '20px';
+        overlay.style.color = 'white';
+        
+        // Find and style the container
+        const container = overlay.querySelector('.dev-message-container');
+        if (container) {
+            container.style.backgroundColor = '#2c3e50';
+            container.style.padding = '30px';
+            container.style.borderRadius = '10px';
+            container.style.textAlign = 'center';
+            container.style.maxWidth = '80%';
+        }
+        
+        // Style emoji
+        const emoji = overlay.querySelector('.dev-message-emoji');
+        if (emoji) {
+            emoji.style.fontSize = '3rem';
+            emoji.style.marginBottom = '20px';
+        }
+        
+        // Style title
+        const title = overlay.querySelector('.dev-message-title');
+        if (title) {
+            title.style.fontSize = '1.5rem';
+            title.style.marginBottom = '15px';
+        }
+        
+        // Style text
+        const text = overlay.querySelector('.dev-message-text');
+        if (text) {
+            text.style.marginBottom = '20px';
+        }
+        
+        // Style button
+        const button = overlay.querySelector('.dev-message-button');
+        if (button) {
+            button.style.padding = '10px 20px';
+            button.style.backgroundColor = '#e74c3c';
+            button.style.color = 'white';
+            button.style.border = 'none';
+            button.style.borderRadius = '4px';
+            button.style.cursor = 'pointer';
+        }
     }
 }

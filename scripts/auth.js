@@ -9,42 +9,81 @@ class Auth {
             'guest': 'birthday40'
         };
         
-        this.loginButton = document.getElementById('login-button');
-        this.logoutButton = document.getElementById('logout-button');
-        this.authError = document.getElementById('auth-error');
+        // Cache DOM elements
+        this.elements = {
+            loginButton: document.getElementById('login-button'),
+            logoutButton: document.getElementById('logout-button'),
+            authError: document.getElementById('auth-error'),
+            username: document.getElementById('username'),
+            password: document.getElementById('password'),
+            authContainer: document.getElementById('auth-container'),
+            gamesContainer: document.getElementById('games-container')
+        };
         
         this.bindEvents();
         this.checkAuthStatus();
     }
     
     bindEvents() {
-        this.loginButton.addEventListener('click', () => this.login());
-        this.logoutButton.addEventListener('click', () => this.logout());
+        this.elements.loginButton.addEventListener('click', () => this.login());
+        this.elements.logoutButton.addEventListener('click', () => this.logout());
+        
+        // Add keyboard event for login form
+        this.elements.password.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.login();
+            }
+        });
     }
     
     login() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+        const username = this.elements.username.value.trim();
+        const password = this.elements.password.value;
+        
+        // Validate inputs
+        if (!username || !password) {
+            this.showError('Please enter both username and password');
+            return;
+        }
         
         if (this.credentials[username] === password) {
-            this.isAuthenticated = true;
-            this.authToken = btoa(`${username}:${password}`); // Base64 encode
-            localStorage.setItem('authToken', this.authToken);
-            this.showGamesContainer();
+            this.authenticateUser(username, password);
         } else {
-            this.authError.textContent = 'Invalid username or password';
+            this.showError('Invalid username or password');
         }
+    }
+    
+    authenticateUser(username, password) {
+        this.isAuthenticated = true;
+        this.authToken = btoa(`${username}:${password}`); // Base64 encode
+        
+        // Use StorageUtils instead of direct localStorage calls
+        StorageUtils.saveToStorage('authToken', this.authToken);
+        
+        this.showGamesContainer();
+        this.clearError();
+        this.clearInputs();
+        
+        // Show success notification
+        UIUtils.showNotification(`Welcome back, ${username}!`, 'success');
     }
     
     logout() {
         this.isAuthenticated = false;
         this.authToken = null;
-        localStorage.removeItem('authToken');
+        
+        // Use StorageUtils to remove data
+        StorageUtils.removeFromStorage('authToken');
+        
         this.showAuthContainer();
+        
+        // Show logout notification
+        UIUtils.showNotification('You have been logged out', 'info');
     }
     
     checkAuthStatus() {
-        const token = localStorage.getItem('authToken');
+        // Use StorageUtils to get data
+        const token = StorageUtils.getFromStorage('authToken', null);
         if (token) {
             this.authToken = token;
             this.isAuthenticated = true;
@@ -52,17 +91,33 @@ class Auth {
         }
     }
     
+    showError(message) {
+        this.elements.authError.textContent = message;
+        this.elements.authError.style.opacity = 1;
+    }
+    
+    clearError() {
+        this.elements.authError.textContent = '';
+        this.elements.authError.style.opacity = 0;
+    }
+    
+    clearInputs() {
+        this.elements.username.value = '';
+        this.elements.password.value = '';
+    }
+    
     showAuthContainer() {
-        document.getElementById('auth-container').classList.add('active');
-        document.getElementById('auth-container').classList.remove('hidden');
-        document.getElementById('games-container').classList.add('hidden');
+        // Use UIUtils instead of direct class manipulation
+        UIUtils.showElement(this.elements.authContainer);
+        UIUtils.hideElement(this.elements.gamesContainer);
     }
     
     showGamesContainer() {
-        document.getElementById('auth-container').classList.add('hidden');
-        document.getElementById('auth-container').classList.remove('active');
-        document.getElementById('games-container').classList.remove('hidden');
+        // Use UIUtils instead of direct class manipulation
+        UIUtils.hideElement(this.elements.authContainer);
+        UIUtils.showElement(this.elements.gamesContainer);
     }
 }
 
+// Initialize auth system
 const auth = new Auth();
