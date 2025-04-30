@@ -60,7 +60,16 @@ class Games {
         
         // Either navigate to the game page or load it in a modal/iframe
         if (game.path) {
-            window.location.href = game.path;
+            // Get base href if it exists
+            const baseElement = document.querySelector('base');
+            const basePath = baseElement ? baseElement.getAttribute('href') || '' : '';
+            
+            // Apply basePath if not already in the game.path
+            if (game.path.startsWith('/')) {
+                window.location.href = basePath + game.path.substring(1);
+            } else {
+                window.location.href = basePath + game.path;
+            }
         } else {
             this.showDevelopmentMessage(game);
         }

@@ -34,9 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create the development message on page load
     createDevMessage();
     
-    // Handle back button click - updated for GitHub Pages
+    // Handle back button click with improved path handling
     backButton.addEventListener('click', () => {
-        window.location.href = '../..';  // Navigate back to root
+        // Using the base href to navigate back to root
+        const baseElement = document.querySelector('base');
+        if (baseElement && baseElement.getAttribute('href')) {
+            // Navigate to the index.html in the base folder
+            window.location.href = baseElement.getAttribute('href') + 'index.html';
+        } else {
+            // Fallback to direct path if no base tag
+            window.location.href = '../../index.html';
+        }
     });
     
     // Handle start button click - show development message

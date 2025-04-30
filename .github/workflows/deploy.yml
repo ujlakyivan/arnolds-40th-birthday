@@ -24,15 +24,74 @@ jobs:
           npm init -y
           npm install fs-extra
 
-      - name: Fix Paths for GitHub Pages
+      - name: Fix Game Paths
         run: |
+          # Create a script to fix game HTML files
+          mkdir -p games
+          cat > games/fix-paths.js << 'EOL'
+          const fs = require('fs-extra');
+          const path = require('path');
+          
+          const GAMES_DIR = './games';
+          const gameDirectories = fs.readdirSync(GAMES_DIR).filter(file => {
+              const fullPath = path.join(GAMES_DIR, file);
+              return fs.statSync(fullPath).isDirectory() && file !== 'node_modules';
+          });
+          
+          console.log(`Found ${gameDirectories.length} game directories to process`);
+          
+          gameDirectories.forEach(gameDir => {
+              const htmlPath = path.join(GAMES_DIR, gameDir, 'index.html');
+              
+              if (fs.existsSync(htmlPath)) {
+                  console.log(`Processing ${htmlPath}`);
+                  
+                  let content = fs.readFileSync(htmlPath, 'utf8');
+                  
+                  // Add or update the base tag
+                  if (content.includes('<base href=')) {
+                      content = content.replace(
+                          /<base href=["'][^"']*["']/g, 
+                          '<base href="../../"'
+                      );
+                  } else if (content.includes('<head>')) {
+                      content = content.replace(
+                          '<head>', 
+                          '<head>\n    <base href="../../">'
+                      );
+                  }
+                  
+                  // Fix resource paths
+                  content = content.replace(
+                      /href=["']\/styles\//g, 
+                      'href="styles/'
+                  );
+                  
+                  content = content.replace(
+                      /href=["']\/games\//g, 
+                      'href="games/'
+                  );
+                  
+                  content = content.replace(
+                      /src=["']\/games\//g, 
+                      'src="games/'
+                  );
+                  
+                  fs.writeFileSync(htmlPath, content);
+                  console.log(`Updated ${htmlPath}`);
+              }
+          });
+          console.log('Game paths fixed!');
+          EOL
+          
+          # Run the game path fixing script
+          node games/fix-paths.js
+          
+          # Continue with the general path fixing
           mkdir -p tools
           cat > tools/fix-paths.js << 'EOL'
           const fs = require('fs-extra');
           const path = require('path');
-          
-          // Repository name - Update this to your actual repository name
-          const REPO_NAME = 'a-birthday';
           
           // Function to recursively process directories
           function processDirectory(directory) {
@@ -74,8 +133,8 @@ jobs:
                 `src="./$1"`
               );
               
-              // Add base tag if not present
-              if (!content.includes('<base href=') && content.includes('<head>')) {
+              // Add base tag if not present and not a game page
+              if (!content.includes('<base href=') && content.includes('<head>') && !filePath.includes('/games/')) {
                 content = content.replace(
                   '<head>',
                   `<head>\n  <base href="./">`
@@ -93,11 +152,6 @@ jobs:
               content = content.replace(
                 /window\.location\.href\s*=\s*['"]\/['"]/g,
                 `window.location.href = './index.html'`
-              );
-              
-              content = content.replace(
-                /window\.location\.href\s*=\s*['"]\.\./g,
-                `window.location.href = '.`
               );
               
               modified = content !== originalContent;

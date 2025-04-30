@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="../">
+    <title>Path Checker - Arnold's 40th</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success {
+            color: green;
+            background-color: #e8f5e9;
+        }
+        .error {
+            color: red;
+            background-color: #ffebee;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .resource-list {
+            list-style: none;
+            padding: 0;
+        }
+        .resource-list li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f5f5f5;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Path Checker</h1>
+    <div id="baseInfo" class="result"></div>
+    <div id="resourcesInfo" class="result">
+        <h2>Resources to Check:</h2>
+        <ul class="resource-list">
+            <li>Main CSS: <span id="mainCss"></span></li>
+            <li>Auth CSS: <span id="authCss"></span></li>
+            <li>Games CSS: <span id="gamesCss"></span></li>
+            <li>Game Template CSS: <span id="templateCss"></span></li>
+            <li>Auth JS: <span id="authJs"></span></li>
+            <li>Games JS: <span id="gamesJs"></span></li>
+            <li>App JS: <span id="appJs"></span></li>
+        </ul>
+    </div>
+    
+    <button id="checkButton">Run Path Check</button>
+    <div id="results" class="result"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Display base URL info
+            const baseElement = document.querySelector('base');
+            const baseInfo = document.getElementById('baseInfo');
+            
+            if (baseElement) {
+                baseInfo.innerHTML = `<p>Base URL is set to: <strong>${baseElement.href}</strong></p>`;
+                baseInfo.className = 'result success';
+            } else {
+                baseInfo.innerHTML = '<p>Warning: No base URL tag found!</p>';
+                baseInfo.className = 'result error';
+            }
+            
+            // Display resource paths
+            document.getElementById('mainCss').textContent = 'styles/main.css';
+            document.getElementById('authCss').textContent = 'styles/auth.css';
+            document.getElementById('gamesCss').textContent = 'styles/games.css';
+            document.getElementById('templateCss').textContent = 'games/game-template.css';
+            document.getElementById('authJs').textContent = 'scripts/auth.js';
+            document.getElementById('gamesJs').textContent = 'scripts/games.js';
+            document.getElementById('appJs').textContent = 'scripts/app.js';
+            
+            // Resource check function
+            document.getElementById('checkButton').addEventListener('click', async () => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '<h2>Checking resources...</h2>';
+                
+                const resources = [
+                    { name: 'Main CSS', path: 'styles/main.css' },
+                    { name: 'Auth CSS', path: 'styles/auth.css' },
+                    { name: 'Games CSS', path: 'styles/games.css' },
+                    { name: 'Game Template CSS', path: 'games/game-template.css' },
+                    { name: 'Auth JS', path: 'scripts/auth.js' },
+                    { name: 'Games JS', path: 'scripts/games.js' },
+                    { name: 'App JS', path: 'scripts/app.js' }
+                ];
+                
+                let results = '<h2>Results:</h2><ul>';
+                
+                for (const resource of resources) {
+                    try {
+                        const response = await fetch(resource.path, { method: 'HEAD' });
+                        if (response.ok) {
+                            results += `<li class="success">${resource.name}: OK (${resource.path})</li>`;
+                        } else {
+                            results += `<li class="error">${resource.name}: Failed with status ${response.status} (${resource.path})</li>`;
+                        }
+                    } catch (error) {
+                        results += `<li class="error">${resource.name}: Error: ${error.message} (${resource.path})</li>`;
+                    }
+                }
+                
+                results += '</ul>';
+                resultsDiv.innerHTML = results;
+                
+                // Check if we can go back to main page
+                results += '<h3>Testing navigation:</h3>';
+                const backButton = document.createElement('button');
+                backButton.textContent = 'Test Back Navigation';
+                backButton.onclick = () => {
+                    window.location.href = baseElement ? baseElement.getAttribute('href') : '../';
+                };
+                resultsDiv.appendChild(backButton);
+            });
+        });
+    </script>
+</body>
+</html>
