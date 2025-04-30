@@ -1,0 +1,125 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Change to master if that's your default branch name
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          
+      - name: Install Dependencies
+        run: |
+          npm init -y
+          npm install fs-extra
+
+      - name: Fix Paths for GitHub Pages
+        run: |
+          mkdir -p tools
+          cat > tools/fix-paths.js << 'EOL'
+          const fs = require('fs-extra');
+          const path = require('path');
+          
+          // Repository name - Update this to your actual repository name
+          const REPO_NAME = 'a-birthday';
+          
+          // Function to recursively process directories
+          function processDirectory(directory) {
+            const files = fs.readdirSync(directory);
+            
+            for (const file of files) {
+              const fullPath = path.join(directory, file);
+              const stat = fs.statSync(fullPath);
+              
+              if (stat.isDirectory() && !fullPath.includes('node_modules') && !fullPath.includes('.git')) {
+                processDirectory(fullPath);
+              } else if (
+                stat.isFile() && 
+                (file.endsWith('.html') || file.endsWith('.js') || file.endsWith('.css'))
+              ) {
+                fixPaths(fullPath);
+              }
+            }
+          }
+          
+          // Function to fix paths in a file
+          function fixPaths(filePath) {
+            console.log(`Processing ${filePath}`);
+            let content = fs.readFileSync(filePath, 'utf8');
+            let modified = false;
+            
+            // Fix absolute paths in href and src attributes
+            if (filePath.endsWith('.html')) {
+              const originalContent = content;
+              
+              // Fix paths in HTML files
+              content = content.replace(
+                /href=["']\/(?!\/|http|https)([^"']*)["']/g, 
+                `href="./$1"`
+              );
+              
+              content = content.replace(
+                /src=["']\/(?!\/|http|https)([^"']*)["']/g, 
+                `src="./$1"`
+              );
+              
+              // Add base tag if not present
+              if (!content.includes('<base href=') && content.includes('<head>')) {
+                content = content.replace(
+                  '<head>',
+                  `<head>\n  <base href="./">`
+                );
+              }
+              
+              modified = content !== originalContent;
+            }
+            
+            // Fix paths in JavaScript files
+            if (filePath.endsWith('.js')) {
+              const originalContent = content;
+              
+              // Fix window.location paths
+              content = content.replace(
+                /window\.location\.href\s*=\s*['"]\/['"]/g,
+                `window.location.href = './index.html'`
+              );
+              
+              content = content.replace(
+                /window\.location\.href\s*=\s*['"]\.\./g,
+                `window.location.href = '.`
+              );
+              
+              modified = content !== originalContent;
+            }
+            
+            // Save the file if modified
+            if (modified) {
+              console.log(`Fixed paths in ${filePath}`);
+              fs.writeFileSync(filePath, content, 'utf8');
+            }
+          }
+          
+          // Start processing from the current directory
+          processDirectory('.');
+          console.log('Path fixing completed');
+          EOL
+          
+          node tools/fix-paths.js
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: .
+          clean: true

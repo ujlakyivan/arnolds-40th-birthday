@@ -8,7 +8,47 @@ A lightweight mobile-optimized web application featuring 10 mini-games to celebr
 - 2x5 grid of mini-games
 - Lightweight implementation
 
-## Getting Started
+## Automatic GitHub Pages Deployment
+
+This project is set up with GitHub Actions for automatic deployment to GitHub Pages:
+
+1. Push your code to GitHub:
+   ```bash
+   git add .
+   git commit -m "Your commit message"
+   git push
+   ```
+
+2. The workflow will automatically:
+   - Fix paths for GitHub Pages compatibility
+   - Deploy to the `gh-pages` branch
+   - Make your site available at `https://your-username.github.io/a-birthday/`
+
+3. Check deployment status in the "Actions" tab of your GitHub repository
+
+## Manual Deployment Steps
+
+If you need to deploy manually:
+
+1. Run the path-fixing script:
+   ```bash
+   node tools/fix-paths.js
+   ```
+
+2. Push to GitHub:
+   ```bash
+   git add .
+   git commit -m "Fix paths for deployment"
+   git push
+   ```
+
+3. Enable GitHub Pages in your repository settings:
+   - Go to Settings > Pages
+   - Select branch: `main` (or your main branch)
+   - Select folder: `/ (root)`
+   - Click "Save"
+
+## Development
 
 ### Using as a Static Site
 Simply open `index.html` in a web browser or host the files on any web server.
@@ -20,27 +60,14 @@ Simply open `index.html` in a web browser or host the files on any web server.
 2. Quick login:
    Add `?autofill` to the URL to pre-fill the login form for testing.
 
-### Using the Server (Optional)
-1. Install dependencies:
-   ```
-   cd server
-   npm install
-   ```
-
-2. Start the server:
-   ```
-   node server.js
-   ```
-
-3. Access the app at `http://localhost:3000`
-
 ## Project Structure
 - `index.html` - Main entry point
 - `styles/` - CSS stylesheets
 - `scripts/` - JavaScript files
 - `assets/` - Images and other static assets
 - `server/` - Simple backend for authentication (optional)
-- `games/` - Each game will have its own folder (to be implemented)
+- `games/` - Each game in its own folder
+- `.github/workflows/` - Automatic deployment configuration
 
 ## Adding Games
 To add new games:
