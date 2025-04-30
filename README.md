@@ -104,6 +104,50 @@ If you see errors like `fatal: could not read Username for 'https://github.com'`
    - Set Source to "GitHub Actions"
    - Select a simple workflow
 
+### "Missing download info" Error
+
+If you get errors like "Missing download info for actions/upload-artifact@v3":
+
+1. Your organization has restrictions on which GitHub Actions can be used
+2. Try these solutions:
+
+   a. **Use the simplified workflow**:
+   ```bash
+   git checkout main
+   git pull
+   mv .github/workflows/deploy-basic.yml .github/workflows/deploy.yml
+   git add .github/workflows/deploy.yml
+   git commit -m "Use simplified deployment workflow"
+   git push origin main
+   ```
+
+   b. **Deploy manually using Git commands**:
+   ```bash
+   # Create .nojekyll file
+   touch .nojekyll
+   
+   # Create and switch to gh-pages branch
+   git checkout --orphan gh-pages
+   
+   # Add all files
+   git add .
+   
+   # Commit changes
+   git commit -m "Manual deployment to GitHub Pages"
+   
+   # Force push to gh-pages branch
+   git push -f origin gh-pages
+   
+   # Go back to main branch
+   git checkout main
+   ```
+
+3. **Enable GitHub Pages in repository settings**:
+   - After pushing to gh-pages branch
+   - Go to Settings > Pages
+   - Source: Deploy from a branch
+   - Branch: gh-pages, folder: / (root)
+
 ## Development
 
 ### Using as a Static Site

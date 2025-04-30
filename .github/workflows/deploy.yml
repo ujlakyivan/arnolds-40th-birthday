@@ -11,7 +11,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -21,8 +21,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Build job
-  build:
+  # Combined build and deploy job to simplify
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,35 +38,29 @@ jobs:
           find . -type f -name "*.html" | xargs -I{} sed -i 's|src="/|src="./|g' {}
           
           # Add base tags to HTML files
-          find ./games -type f -name "index.html" | xargs -I{} sed -i '/<head>/a \  <base href="../../">' {}
-          find . -maxdepth 1 -type f -name "*.html" | xargs -I{} sed -i '/<head>/a \  <base href="./">' {}
+          find ./games -type f -name "index.html" | while read file; do
+            if ! grep -q "<base href=" "$file"; then
+              sed -i 's|<head>|<head>\n  <base href="../../">|' "$file"
+            fi
+          done
+          
+          find . -maxdepth 1 -type f -name "*.html" | while read file; do
+            if ! grep -q "<base href=" "$file"; then
+              sed -i 's|<head>|<head>\n  <base href="./">|' "$file"
+            fi
+          done
           
           # Fix JS files
-          find . -type f -name "*.js" | xargs -I{} sed -i 's|window.location.href = "/"|window.location.href = "./"|g' {}
-
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v1
-
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: ./_site
-
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+          find . -type f -name "*.js" | xargs -i sed -i 's|window.location.href = "/"|window.location.href = "./"|g' {}
+      
+      - name: Setup Git for Deployment
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+      
+      - name: Push to gh-pages branch
+        run: |
+          git checkout --orphan gh-pages
+          git add --all
+          git commit -m "Deploy to GitHub Pages"
+          git push -f origin gh-pages
