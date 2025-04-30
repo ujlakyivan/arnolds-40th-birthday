@@ -1,0 +1,65 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy" to confirm deployment'
+        required: true
+        default: 'deploy'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.event.inputs.confirm == 'deploy'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
+
+      - name: Create .nojekyll file
+        run: touch .nojekyll
+
+      - name: Fix paths in HTML files
+        run: |
+          echo "Fixing paths in HTML files..."
+          find . -type f -name "*.html" | grep -v "node_modules" | grep -v ".git" | while read file; do
+            echo "Processing $file"
+            
+            # Fix absolute paths
+            sed -i 's|href="/|href="./|g' "$file"
+            sed -i 's|src="/|src="./|g' "$file"
+            
+            # Add base tag if needed
+            if grep -q "/games/" <<< "$file" && ! grep -q "<base href=" "$file"; then
+              echo "Adding game base tag to $file"
+              sed -i 's|<head>|<head>\n  <base href="../../">|' "$file"
+            elif ! grep -q "<base href=" "$file"; then
+              echo "Adding base tag to $file"
+              sed -i 's|<head>|<head>\n  <base href="./">|' "$file"
+            fi
+          done
+          echo "Path fixing completed"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

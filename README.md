@@ -48,6 +48,39 @@ If you encounter deployment errors:
    - Source should be set to "Deploy from a branch" 
    - Branch should be set to "gh-pages" with "/ (root)"
 
+### GitHub Pages Deployment Workflow
+
+We've provided two GitHub Actions workflows:
+
+1. **Automatic deployment** (deploy.yml):
+   - Triggers automatically when you push to main branch
+   - Uses GitHub's official Pages deployment action
+
+2. **Manual deployment** (manual-deploy.yml):
+   - Can be triggered manually from GitHub's Actions tab
+   - Useful if automatic deployment is failing
+
+To manually trigger a deployment:
+1. Go to your repository on GitHub
+2. Click "Actions" tab
+3. Select "Manual Deploy" from the workflows list
+4. Click "Run workflow"
+5. Enter "deploy" in the input field and click "Run workflow"
+
+### If Deployment Still Fails
+
+If both workflows fail:
+
+1. Enable GitHub Pages directly in repository settings:
+   - Go to Settings > Pages
+   - Source: Deploy from a branch
+   - Branch: main (or your main branch), folder: / (root)
+
+2. Manually prepare your repository for GitHub Pages:
+   - Add proper base tags to all HTML files
+   - Create a .nojekyll file in your repository root
+   - Fix any absolute paths in your code
+
 ### Authentication Error during Deployment
 
 If you see errors like `fatal: could not read Username for 'https://github.com'`:

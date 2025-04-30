@@ -1,125 +1,72 @@
 name: Deploy to GitHub Pages
 
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push events but only for the main branch
   push:
-    branches:
-      - main  # Change to master if that's your default branch name
+    branches: [ main ]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN
 permissions:
-  contents: write
+  contents: read
   pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  # Build job
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v1
-        
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14'
-      
+
       - name: Create .nojekyll file
         run: touch .nojekyll
-      
-      - name: Install Basic Dependencies
-        run: npm install -g fs path
-      
-      - name: Create Path Fixing Script
-        run: |
-          cat > fix-paths.js << 'EOL'
-          const fs = require('fs');
-          const path = require('path');
-          
-          // Log output function to help debug
-          function log(message) {
-            console.log(`[PathFixer] ${message}`);
-          }
-          
-          // Find all HTML files
-          function findHtmlFiles(dir) {
-            let results = [];
-            const files = fs.readdirSync(dir);
-            
-            for (const file of files) {
-              const filePath = path.join(dir, file);
-              const stat = fs.statSync(filePath);
-              
-              if (stat.isDirectory() && 
-                  file !== 'node_modules' && 
-                  file !== '.git' && 
-                  file !== '.github') {
-                results = results.concat(findHtmlFiles(filePath));
-              } else if (file.endsWith('.html')) {
-                results.push(filePath);
-              }
-            }
-            
-            return results;
-          }
-          
-          // Fix HTML files
-          const htmlFiles = findHtmlFiles('.');
-          log(`Found ${htmlFiles.length} HTML files to process`);
-          
-          htmlFiles.forEach(filePath => {
-            log(`Processing ${filePath}`);
-            
-            let content = fs.readFileSync(filePath, 'utf8');
-            
-            // Check if this is a game file
-            const isGameFile = filePath.includes('/games/') && 
-                               !filePath.includes('/game-template') &&
-                               !filePath.includes('check-paths.html');
-            
-            // Add base tag
-            if (!content.includes('<base href=')) {
-              if (isGameFile) {
-                log(`Adding game base tag to ${filePath}`);
-                content = content.replace(
-                  '<head>', 
-                  '<head>\n  <base href="../../">'
-                );
-              } else {
-                log(`Adding base tag to ${filePath}`);
-                content = content.replace(
-                  '<head>', 
-                  '<head>\n  <base href="./">'
-                );
-              }
-            }
-            
-            // Fix path references
-            content = content.replace(
-              /href=["']\/(?!\/|http|https)([^"']*)["']/g, 
-              'href="./$1"'
-            );
-            
-            content = content.replace(
-              /src=["']\/(?!\/|http|https)([^"']*)["']/g, 
-              'src="./$1"'
-            );
-            
-            fs.writeFileSync(filePath, content, 'utf8');
-          });
-          
-          log('HTML files processed successfully');
-          EOL
-          
-          node fix-paths.js
-          
-      # Setup Pages
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
 
-      # Deploy to GitHub Pages
+      - name: Fix Paths
+        run: |
+          # Inline script to fix paths in HTML files
+          find . -type f -name "*.html" | xargs -I{} sed -i 's|href="/|href="./|g' {}
+          find . -type f -name "*.html" | xargs -I{} sed -i 's|src="/|src="./|g' {}
+          
+          # Add base tags to HTML files
+          find ./games -type f -name "index.html" | xargs -I{} sed -i '/<head>/a \  <base href="../../">' {}
+          find . -maxdepth 1 -type f -name "*.html" | xargs -I{} sed -i '/<head>/a \  <base href="./">' {}
+          
+          # Fix JS files
+          find . -type f -name "*.js" | xargs -I{} sed -i 's|window.location.href = "/"|window.location.href = "./"|g' {}
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v1
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: '.'
+          path: ./_site
 
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
