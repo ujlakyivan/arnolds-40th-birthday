@@ -48,6 +48,29 @@ If you encounter deployment errors:
    - Source should be set to "Deploy from a branch" 
    - Branch should be set to "gh-pages" with "/ (root)"
 
+### Authentication Error during Deployment
+
+If you see errors like `fatal: could not read Username for 'https://github.com'`:
+
+1. Check if your organization has restrictions on GitHub Actions:
+   - Go to Organization Settings > Actions > General 
+   - See what permissions are allowed for workflow tokens
+
+2. Try the simple deployment workflow:
+   - Rename `.github/workflows/deploy-simple.yml` to `.github/workflows/deploy.yml`
+   - Push changes to trigger a new deployment
+
+3. Set up a personal access token (PAT):
+   - Create a token at GitHub Settings > Developer settings > Personal access tokens
+   - Give it `repo` permissions
+   - Add it to your repository as a secret named `GH_PAT`
+   - Update the workflow to use: `git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git`
+
+4. Use GitHub Pages settings directly:
+   - Go to repository Settings > Pages
+   - Set Source to "GitHub Actions"
+   - Select a simple workflow
+
 ## Development
 
 ### Using as a Static Site
