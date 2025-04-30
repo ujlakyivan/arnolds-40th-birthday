@@ -5,8 +5,13 @@
 
 // Initialize when document is ready
 document.addEventListener('DOMContentLoaded', () => {
-    // First, remove any previous click event listeners from the start button
-    // by cloning and replacing it (this will remove the development message handler)
+    // Remove the development message completely
+    const devMessage = document.querySelector('.development-message');
+    if (devMessage) {
+        devMessage.remove();
+    }
+    
+    // Remove the old start button event listener and create a new one
     const startButton = document.querySelector('.start-button');
     const newStartButton = startButton.cloneNode(true);
     startButton.parentNode.replaceChild(newStartButton, startButton);
