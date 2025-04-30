@@ -8,6 +8,73 @@ A lightweight mobile-optimized web application featuring 10 mini-games to celebr
 - 2x5 grid of mini-games
 - Lightweight implementation
 
+## GitHub Pages Deployment with Organizational Restrictions
+
+Your organization has security policies that restrict which GitHub Actions can be used. Here are your options:
+
+### Option 1: Use the simplified workflow
+
+1. Rename the workflow file:
+   ```bash
+   mv .github/workflows/deploy-basic.yml .github/workflows/deploy.yml
+   ```
+
+2. Push your changes:
+   ```bash
+   git add .
+   git commit -m "Use simplified workflow"
+   git push
+   ```
+
+3. The workflow will deploy to the `gh-pages` branch using only basic, allowed actions
+
+### Option 2: Manual deployment
+
+1. Run the provided deploy script:
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+2. Commit and push your changes:
+   ```bash
+   git add .
+   git commit -m "Fix paths for GitHub Pages"
+   git push
+   ```
+
+3. Go to your repository Settings > Pages, and set source to:
+   - Branch: `main` (or your main branch)
+   - Folder: `/ (root)`
+
+### Option 3: Deploy using GitHub interface
+
+If all else fails, you can perform the deployment manually:
+
+1. Run the deploy script to fix paths:
+   ```bash
+   ./deploy.sh
+   ```
+
+2. Go to your GitHub repository
+3. Click the "Code" dropdown, then "Download ZIP"
+4. Extract the ZIP file
+5. Create a new branch called `gh-pages` in GitHub
+6. Upload all files to that branch using the GitHub web interface
+
+## Troubleshooting
+
+If you're facing issues with GitHub Actions:
+
+1. Check your organization's GitHub Actions policies:
+   - Go to Organization Settings > Actions > General
+   - See which actions are allowed in your organization
+
+2. Try using the manual deployment option
+
+3. Contact your GitHub organization admin to request permission to use 
+   necessary actions or to help with the deployment
+
 ## Automatic GitHub Pages Deployment
 
 This project is set up with GitHub Actions for automatic deployment to GitHub Pages:

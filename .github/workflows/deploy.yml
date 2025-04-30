@@ -5,188 +5,123 @@ on:
     branches:
       - main  # Change to master if that's your default branch name
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+        
+      - name: Setup Node
+        uses: actions/setup-node@v1
         with:
-          persist-credentials: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          
-      - name: Install Dependencies
-        run: |
-          npm init -y
-          npm install fs-extra
-
+          node-version: '14'
+      
       - name: Create .nojekyll file
         run: touch .nojekyll
-
-      - name: Fix Game Paths
+      
+      - name: Install Basic Dependencies
+        run: npm install -g fs path
+      
+      - name: Create Path Fixing Script
         run: |
-          # Create a script to fix game HTML files
-          mkdir -p games
-          cat > games/fix-paths.js << 'EOL'
-          const fs = require('fs-extra');
+          cat > fix-paths.js << 'EOL'
+          const fs = require('fs');
           const path = require('path');
           
-          const GAMES_DIR = './games';
-          const gameDirectories = fs.readdirSync(GAMES_DIR).filter(file => {
-              const fullPath = path.join(GAMES_DIR, file);
-              return fs.statSync(fullPath).isDirectory() && file !== 'node_modules';
-          });
+          // Log output function to help debug
+          function log(message) {
+            console.log(`[PathFixer] ${message}`);
+          }
           
-          console.log(`Found ${gameDirectories.length} game directories to process`);
-          
-          gameDirectories.forEach(gameDir => {
-              const htmlPath = path.join(GAMES_DIR, gameDir, 'index.html');
-              
-              if (fs.existsSync(htmlPath)) {
-                  console.log(`Processing ${htmlPath}`);
-                  
-                  let content = fs.readFileSync(htmlPath, 'utf8');
-                  
-                  // Add or update the base tag
-                  if (content.includes('<base href=')) {
-                      content = content.replace(
-                          /<base href=["'][^"']*["']/g, 
-                          '<base href="../../"'
-                      );
-                  } else if (content.includes('<head>')) {
-                      content = content.replace(
-                          '<head>', 
-                          '<head>\n    <base href="../../">'
-                      );
-                  }
-                  
-                  // Fix resource paths
-                  content = content.replace(
-                      /href=["']\/styles\//g, 
-                      'href="styles/'
-                  );
-                  
-                  content = content.replace(
-                      /href=["']\/games\//g, 
-                      'href="games/'
-                  );
-                  
-                  content = content.replace(
-                      /src=["']\/games\//g, 
-                      'src="games/'
-                  );
-                  
-                  fs.writeFileSync(htmlPath, content);
-                  console.log(`Updated ${htmlPath}`);
-              }
-          });
-          console.log('Game paths fixed!');
-          EOL
-          
-          # Run the game path fixing script if the directory exists and has subdirectories
-          if [ -d "games" ] && [ "$(ls -A games | grep -v "fix-paths.js" | wc -l)" -gt 0 ]; then
-            node games/fix-paths.js
-          else
-            echo "No game directories found to process"
-          fi
-          
-          # Continue with the general path fixing
-          mkdir -p tools
-          cat > tools/fix-paths.js << 'EOL'
-          const fs = require('fs-extra');
-          const path = require('path');
-          
-          // Function to recursively process directories
-          function processDirectory(directory) {
-            const files = fs.readdirSync(directory);
+          // Find all HTML files
+          function findHtmlFiles(dir) {
+            let results = [];
+            const files = fs.readdirSync(dir);
             
             for (const file of files) {
-              const fullPath = path.join(directory, file);
-              const stat = fs.statSync(fullPath);
+              const filePath = path.join(dir, file);
+              const stat = fs.statSync(filePath);
               
-              if (stat.isDirectory() && !fullPath.includes('node_modules') && !fullPath.includes('.git')) {
-                processDirectory(fullPath);
-              } else if (
-                stat.isFile() && 
-                (file.endsWith('.html') || file.endsWith('.js') || file.endsWith('.css'))
-              ) {
-                fixPaths(fullPath);
+              if (stat.isDirectory() && 
+                  file !== 'node_modules' && 
+                  file !== '.git' && 
+                  file !== '.github') {
+                results = results.concat(findHtmlFiles(filePath));
+              } else if (file.endsWith('.html')) {
+                results.push(filePath);
               }
             }
+            
+            return results;
           }
           
-          // Function to fix paths in a file
-          function fixPaths(filePath) {
-            console.log(`Processing ${filePath}`);
-            let content = fs.readFileSync(filePath, 'utf8');
-            let modified = false;
+          // Fix HTML files
+          const htmlFiles = findHtmlFiles('.');
+          log(`Found ${htmlFiles.length} HTML files to process`);
+          
+          htmlFiles.forEach(filePath => {
+            log(`Processing ${filePath}`);
             
-            // Fix absolute paths in href and src attributes
-            if (filePath.endsWith('.html')) {
-              const originalContent = content;
-              
-              // Fix paths in HTML files
-              content = content.replace(
-                /href=["']\/(?!\/|http|https)([^"']*)["']/g, 
-                `href="./$1"`
-              );
-              
-              content = content.replace(
-                /src=["']\/(?!\/|http|https)([^"']*)["']/g, 
-                `src="./$1"`
-              );
-              
-              // Add base tag if not present and not a game page
-              if (!content.includes('<base href=') && content.includes('<head>') && !filePath.includes('/games/')) {
+            let content = fs.readFileSync(filePath, 'utf8');
+            
+            // Check if this is a game file
+            const isGameFile = filePath.includes('/games/') && 
+                               !filePath.includes('/game-template') &&
+                               !filePath.includes('check-paths.html');
+            
+            // Add base tag
+            if (!content.includes('<base href=')) {
+              if (isGameFile) {
+                log(`Adding game base tag to ${filePath}`);
                 content = content.replace(
-                  '<head>',
-                  `<head>\n  <base href="./">`
+                  '<head>', 
+                  '<head>\n  <base href="../../">'
+                );
+              } else {
+                log(`Adding base tag to ${filePath}`);
+                content = content.replace(
+                  '<head>', 
+                  '<head>\n  <base href="./">'
                 );
               }
-              
-              modified = content !== originalContent;
             }
             
-            // Fix paths in JavaScript files
-            if (filePath.endsWith('.js')) {
-              const originalContent = content;
-              
-              // Fix window.location paths
-              content = content.replace(
-                /window\.location\.href\s*=\s*['"]\/['"]/g,
-                `window.location.href = './index.html'`
-              );
-              
-              modified = content !== originalContent;
-            }
+            // Fix path references
+            content = content.replace(
+              /href=["']\/(?!\/|http|https)([^"']*)["']/g, 
+              'href="./$1"'
+            );
             
-            // Save the file if modified
-            if (modified) {
-              console.log(`Fixed paths in ${filePath}`);
-              fs.writeFileSync(filePath, content, 'utf8');
-            }
-          }
+            content = content.replace(
+              /src=["']\/(?!\/|http|https)([^"']*)["']/g, 
+              'src="./$1"'
+            );
+            
+            fs.writeFileSync(filePath, content, 'utf8');
+          });
           
-          // Start processing from the current directory
-          processDirectory('.');
-          console.log('Path fixing completed');
+          log('HTML files processed successfully');
           EOL
           
-          node tools/fix-paths.js
-
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: .
-          clean: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          node fix-paths.js
+      
+      - name: Setup Git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      
+      - name: Deploy to gh-pages branch
+        run: |
+          # Create a new branch without history
+          git checkout --orphan gh-pages
+          
+          # Add all files
+          git add .
+          git add .nojekyll
+          
+          # Commit files
+          git commit -m "Deploy to GitHub Pages"
+          
+          # Force push to gh-pages branch
+          git push -f origin gh-pages
