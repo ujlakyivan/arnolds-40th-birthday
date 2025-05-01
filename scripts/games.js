@@ -16,7 +16,8 @@ class Games {
         
         // Cache DOM elements
         this.elements = {
-            gamesContainer: document.querySelector('.games-grid')
+            gamesContainer: document.querySelector('.games-grid'),
+            confettiContainer: document.getElementById('confetti-container')
         };
         
         this.init();
@@ -24,6 +25,7 @@ class Games {
     
     init() {
         this.loadGames();
+        this.createConfetti();
     }
     
     loadGames() {
@@ -40,7 +42,7 @@ class Games {
     createGameElement(game) {
         // Create game tile element
         const gameDiv = document.createElement('div');
-        gameDiv.className = 'game-tile';
+        gameDiv.className = 'game-tile festive-game-tile';
         gameDiv.dataset.gameId = game.id;
         
         // Create emoji icon container
@@ -56,7 +58,10 @@ class Games {
         gameDiv.appendChild(title);
         
         // Add click event
-        gameDiv.addEventListener('click', () => this.launchGame(game));
+        gameDiv.addEventListener('click', () => {
+            this.createBurstConfetti();
+            setTimeout(() => this.launchGame(game), 500);
+        });
         
         return gameDiv;
     }
@@ -74,6 +79,75 @@ class Games {
         imgPlaceholder.innerHTML = game.emoji || '🎮';
         
         return imgPlaceholder;
+    }
+    
+    createConfetti() {
+        // Create random confetti pieces that fall occasionally
+        const colors = ['#ff6b6b', '#4ecdc4', '#ffbe0b', '#ff9f68', '#6a89cc', '#9b59b6'];
+        const shapes = ['circle', 'square', 'triangle'];
+        
+        // Initial confetti burst
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => this.createConfettiPiece(colors, shapes), i * 100);
+        }
+        
+        // Occasional confetti
+        setInterval(() => {
+            this.createConfettiPiece(colors, shapes);
+        }, 2000);
+    }
+    
+    createBurstConfetti() {
+        const colors = ['#ff6b6b', '#4ecdc4', '#ffbe0b', '#ff9f68', '#6a89cc', '#9b59b6'];
+        const shapes = ['circle', 'square', 'triangle'];
+        
+        for (let i = 0; i < 30; i++) {
+            setTimeout(() => this.createConfettiPiece(colors, shapes), i * 50);
+        }
+    }
+    
+    createConfettiPiece(colors, shapes) {
+        if (!this.elements.confettiContainer) return;
+        
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        // Random properties
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        const size = Math.random() * 10 + 5; // 5-15px
+        const left = Math.random() * 100; // 0-100%
+        
+        // Apply styles based on shape
+        confetti.style.left = `${left}%`;
+        confetti.style.width = `${size}px`;
+        confetti.style.height = `${size}px`;
+        confetti.style.backgroundColor = color;
+        
+        if (shape === 'circle') {
+            confetti.style.borderRadius = '50%';
+        } else if (shape === 'triangle') {
+            confetti.style.width = '0';
+            confetti.style.height = '0';
+            confetti.style.backgroundColor = 'transparent';
+            confetti.style.borderLeft = `${size/2}px solid transparent`;
+            confetti.style.borderRight = `${size/2}px solid transparent`;
+            confetti.style.borderBottom = `${size}px solid ${color}`;
+        }
+        
+        // Random animation duration
+        const duration = Math.random() * 2 + 2; // 2-4s
+        confetti.style.animationDuration = `${duration}s`;
+        
+        // Add to DOM
+        this.elements.confettiContainer.appendChild(confetti);
+        
+        // Remove after animation completes
+        setTimeout(() => {
+            if (confetti.parentNode === this.elements.confettiContainer) {
+                this.elements.confettiContainer.removeChild(confetti);
+            }
+        }, duration * 1000);
     }
     
     launchGame(game) {

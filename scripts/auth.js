@@ -6,7 +6,7 @@ class Auth {
         // Simple hardcoded credentials for demo
         // In a real app, you'd use a secure backend
         this.credentials = {
-            'guest': 'birthday40'
+            'muradin': 'gfy'
         };
         
         // Cache DOM elements
@@ -64,8 +64,7 @@ class Auth {
         this.clearError();
         this.clearInputs();
         
-        // Show success notification
-        UIUtils.showNotification(`Welcome back, ${username}!`, 'success');
+        // Success notification removed
     }
     
     logout() {
@@ -77,8 +76,7 @@ class Auth {
         
         this.showAuthContainer();
         
-        // Show logout notification
-        UIUtils.showNotification('You have been logged out', 'info');
+        // Logout notification removed
     }
     
     checkAuthStatus() {

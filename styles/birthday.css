@@ -1,0 +1,155 @@
+/* Birthday Festive Styles for Arnold's 40th */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes confetti-fall {
+    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(calc(100vh)) rotate(360deg); opacity: 0; }
+}
+
+.birthday-header {
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ff9f68, #6a89cc);
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
+    text-align: center;
+    padding: 1.5rem 1rem !important;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid gold;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.birthday-header h1 {
+    font-size: 1.8rem !important;
+    color: white !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite ease-in-out;
+    margin: 0;
+}
+
+.birthday-emoji {
+    font-size: 2rem;
+    margin: 0 8px;
+    display: inline-block;
+    animation: float 3s infinite ease-in-out;
+}
+
+.birthday-emoji:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.birthday-emoji:nth-child(3) {
+    animation-delay: 1s;
+}
+
+.birthday-emoji:nth-child(4) {
+    animation-delay: 1.5s;
+}
+
+.games-container-festive {
+    background-color: #f9f9f9;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffde59' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+    position: relative;
+}
+
+.birthday-age {
+    font-size: 1.3rem;
+    color: white;
+    margin-top: 0.5rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Festive game tile styles with responsive adjustments */
+.festive-game-tile {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 20px 15px;
+    border: 2px solid #ffd700;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.3s ease;
+}
+
+.festive-game-tile:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    border-color: #ff9f68;
+}
+
+.festive-game-tile .game-emoji-icon {
+    transform: scale(1.2);
+    margin-bottom: 15px !important;
+}
+
+/* Responsive adjustments for game tiles */
+@media screen and (min-width: 768px) {
+    .festive-game-tile {
+        padding: 15px 10px;
+    }
+    
+    .festive-game-tile .game-emoji-icon {
+        font-size: 2.2rem !important;
+    }
+    
+    .festive-game-tile .game-title {
+        font-size: 0.95rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .festive-game-tile {
+        padding: 15px;
+    }
+    
+    .festive-game-tile .game-emoji-icon {
+        font-size: 2rem !important;
+    }
+}
+
+/* Keep header font size responsive */
+@media screen and (min-width: 768px) {
+    .birthday-header h1 {
+        font-size: 2.2rem !important;
+    }
+    
+    .birthday-age {
+        font-size: 1.5rem;
+    }
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    z-index: 1000;
+    animation: confetti-fall 4s linear forwards;
+    pointer-events: none;
+}
+
+.logout-button-festive {
+    background-color: #ff6b6b !important;
+    padding: 10px 15px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
+}
+
+.logout-button-festive:hover {
+    background-color: #ff5252 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2) !important;
+}
