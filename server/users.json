@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "$2b$10$eOofkb4JQ.93KVeq03dOHOlBV76BijV2FOrhqxyEWgQaUPyg2nl46",
+      "role": "admin",
+      "created": "2025-05-02T08:26:55.610Z"
+    },
+    {
+      "id": 2,
+      "username": "muradin",
+      "password": "$2b$10$zBrdAIP.FgIDsP23wr/hce2xPCRGcgeXDcjMAViYnrE0uREGcMAxW",
+      "role": "user",
+      "created": "2025-05-02T08:26:55.611Z"
+    }
+  ]
+}
