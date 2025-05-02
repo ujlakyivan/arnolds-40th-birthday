@@ -45,6 +45,25 @@
     justify-content: center;
 }
 
+/* Intro Screen Styling */
+.intro-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.instructions {
+    margin: 1rem 0;
+}
+
+.instructions p {
+    margin-bottom: 1rem;
+}
+
 .trivia-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
@@ -183,6 +202,19 @@
     color: #c8aa6e;
     font-size: 1.1rem;
     margin-bottom: 10px;
+}
+
+.question-number {
+    color: #c8aa6e;
+    font-size: 1rem;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: rgba(30, 35, 40, 0.7);
+    border: 1px solid #785a28;
+    display: inline-block;
 }
 
 .result-container {

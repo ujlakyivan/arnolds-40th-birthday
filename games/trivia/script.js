@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentQuestion: 0,
         score: 0,
         questions: [],
-        questionsToUse: 5, // We'll use 5 questions per game
+        questionsToUse: 20, // Increased from 5 to 20 questions per game
         timeLimit: 15,
         timerInterval: null,
         answerSelected: false
@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         optionsContainer: document.getElementById('options-container'),
         currentScore: document.getElementById('current-score'),
         totalQuestions: document.getElementById('total-questions'),
+        currentQuestionNum: document.getElementById('current-question-num'),
+        totalQuestionsNum: document.getElementById('total-questions-num'),
         finalScore: document.getElementById('final-score'),
         finalTotal: document.getElementById('final-total'),
         resultMessage: document.getElementById('result-message'),
@@ -90,13 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('No questions available');
             }
             
-            // Select 5 random questions from the question pool
+            // Select random questions from the question pool
             const randomQuestions = shuffleArray([...allQuestions]).slice(0, gameState.questionsToUse);
             gameState.questions = randomQuestions;
             
             // Set total questions in UI
             elements.totalQuestions.textContent = gameState.questionsToUse;
             elements.finalTotal.textContent = gameState.questionsToUse;
+            elements.totalQuestionsNum.textContent = gameState.questionsToUse;
 
             // Initialize game state
             gameState.currentQuestion = 0;
@@ -135,6 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update UI
         elements.questionText.textContent = question.question;
+        
+        // Update question number (1-based for display)
+        elements.currentQuestionNum.textContent = index + 1;
         
         // Hide question image since we're not using images anymore
         if (elements.questionImage) {

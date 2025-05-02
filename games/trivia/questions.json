@@ -99,6 +99,441 @@
       "question": "Which legendary weapon was wielded by Arthas as the Lich King?",
       "options": ["Ashbringer", "Frostmourne", "Thunderfury", "Shadowmourne"],
       "answer": "Frostmourne"
+    },
+    {
+      "question": "What was the first raid instance released in World of Warcraft?",
+      "options": ["Molten Core", "Onyxia's Lair", "Blackwing Lair", "Karazhan"],
+      "answer": "Molten Core"
+    },
+    {
+      "question": "Which creature type can Hunters tame as pets?",
+      "options": ["Demons", "Elementals", "Beasts", "Humanoids"],
+      "answer": "Beasts"
+    },
+    {
+      "question": "Who is the leader of the Burning Legion?",
+      "options": ["Kil'jaeden", "Archimonde", "Sargeras", "Mannoroth"],
+      "answer": "Sargeras"
+    },
+    {
+      "question": "What is the name of the faction representing Night Elves in World of Warcraft?",
+      "options": ["Argent Dawn", "Cenarion Circle", "Darnassus", "Silver Hand"],
+      "answer": "Darnassus"
+    },
+    {
+      "question": "Which class has the ability to resurrect other players?",
+      "options": ["Druid", "Priest", "Mage", "Rogue"],
+      "answer": "Priest"
+    },
+    {
+      "question": "What is the name of the neutral city in Northrend?",
+      "options": ["Dalaran", "Shattrath", "Stormwind", "Orgrimmar"],
+      "answer": "Dalaran"
+    },
+    {
+      "question": "Which dragon aspect is the Aspect of Time?",
+      "options": ["Alexstrasza", "Ysera", "Malygos", "Nozdormu"],
+      "answer": "Nozdormu"
+    },
+    {
+      "question": "What is the primary gathering profession that pairs with Blacksmithing?",
+      "options": ["Herbalism", "Mining", "Skinning", "Enchanting"],
+      "answer": "Mining"
+    },
+    {
+      "question": "Which race can transform into a worgen?",
+      "options": ["Humans", "Night Elves", "Dwarves", "Gnomes"],
+      "answer": "Humans"
+    },
+    {
+      "question": "Who is the final boss of the Black Temple raid?",
+      "options": ["Kil'jaeden", "Archimonde", "Illidan Stormrage", "Lady Vashj"],
+      "answer": "Illidan Stormrage"
+    },
+    {
+      "question": "Which event occurs every year during October/November in World of Warcraft?",
+      "options": ["Brewfest", "Hallow's End", "Winter Veil", "Love is in the Air"],
+      "answer": "Hallow's End"
+    },
+    {
+      "question": "What is the name of the warlock's demonic language?",
+      "options": ["Thalassian", "Orcish", "Demonic", "Darnassian"],
+      "answer": "Demonic"
+    },
+    {
+      "question": "Who is the master of the Molten Core?",
+      "options": ["Nefarian", "Onyxia", "Ragnaros", "C'Thun"],
+      "answer": "Ragnaros"
+    },
+    {
+      "question": "Which material is required to craft most enchanting items?",
+      "options": ["Soul Dust", "Strange Dust", "Arcane Dust", "Spirit Dust"],
+      "answer": "Strange Dust"
+    },
+    {
+      "question": "What is the native language of the Draenei?",
+      "options": ["Draenei", "Eredun", "Orcish", "Common"],
+      "answer": "Draenei"
+    },
+    {
+      "question": "Which zone was completely destroyed and turned into a crater in the Cataclysm expansion?",
+      "options": ["Thousand Needles", "The Barrens", "Azshara", "Darkshore"],
+      "answer": "Thousand Needles"
+    },
+    {
+      "question": "What is the name of the trade skill that allows players to create scrolls and glyphs?",
+      "options": ["Enchanting", "Alchemy", "Inscription", "Tailoring"],
+      "answer": "Inscription"
+    },
+    {
+      "question": "Which class has the ability Heroism (Alliance) / Bloodlust (Horde)?",
+      "options": ["Warrior", "Paladin", "Shaman", "Hunter"],
+      "answer": "Shaman"
+    },
+    {
+      "question": "What was the first Allied Race added to the Horde?",
+      "options": ["Nightborne", "Highmountain Tauren", "Mag'har Orcs", "Zandalari Trolls"],
+      "answer": "Nightborne"
+    },
+    {
+      "question": "Which continent was added in the Mists of Pandaria expansion?",
+      "options": ["Northrend", "Broken Isles", "Pandaria", "Kul Tiras"],
+      "answer": "Pandaria"
+    },
+    {
+      "question": "Who is the ruler of Silvermoon City?",
+      "options": ["Sylvanas Windrunner", "Lor'themar Theron", "Kael'thas Sunstrider", "Anasterian Sunstrider"],
+      "answer": "Lor'themar Theron"
+    },
+    {
+      "question": "What is the currency used to purchase PvP gear?",
+      "options": ["Gold", "Honor Points", "Justice Points", "Valor Points"],
+      "answer": "Honor Points"
+    },
+    {
+      "question": "What type of weapon can only Shamans equip?",
+      "options": ["Wands", "Shields", "Totems", "Polearms"],
+      "answer": "Totems"
+    },
+    {
+      "question": "Which dungeon features the boss Edwin VanCleef?",
+      "options": ["Deadmines", "Wailing Caverns", "Shadowfang Keep", "Scarlet Monastery"],
+      "answer": "Deadmines"
+    },
+    {
+      "question": "What level did characters start at in Classic WoW?",
+      "options": ["Level 1", "Level 5", "Level 10", "Level 20"],
+      "answer": "Level 1"
+    },
+    {
+      "question": "Which of these is NOT one of the Titan Keepers?",
+      "options": ["Thorim", "Hodir", "Freya", "Arthas"],
+      "answer": "Arthas"
+    },
+    {
+      "question": "What is the name of the neutral faction introduced in Burning Crusade that offers a variety of daily quests?",
+      "options": ["Cenarion Expedition", "Sha'tari Skyguard", "Netherwing", "Shattered Sun Offensive"],
+      "answer": "Shattered Sun Offensive"
+    },
+    {
+      "question": "Which city serves as the neutral capital in Burning Crusade?",
+      "options": ["Dalaran", "Shattrath City", "Silvermoon City", "Exodar"],
+      "answer": "Shattrath City"
+    },
+    {
+      "question": "What is the name of the large lake in the center of Azeroth?",
+      "options": ["The Maelstrom", "Loch Modan", "The Great Sea", "The Forbidding Sea"],
+      "answer": "The Maelstrom"
+    },
+    {
+      "question": "Who is known as 'The Guardian of Tirisfal'?",
+      "options": ["Jaina Proudmoore", "Medivh", "Khadgar", "Aegwynn"],
+      "answer": "Medivh"
+    },
+    {
+      "question": "Which expansion introduced the Death Knight class?",
+      "options": ["The Burning Crusade", "Wrath of the Lich King", "Cataclysm", "Mists of Pandaria"],
+      "answer": "Wrath of the Lich King"
+    },
+    {
+      "question": "What is the primary stat for Hunter class?",
+      "options": ["Strength", "Intellect", "Agility", "Stamina"],
+      "answer": "Agility"
+    },
+    {
+      "question": "What is the name of the goblin starting zone?",
+      "options": ["Kezan", "Gilneas", "Azshara", "Bilgewater Harbor"],
+      "answer": "Kezan"
+    },
+    {
+      "question": "Which of these races cannot be Paladins?",
+      "options": ["Humans", "Dwarves", "Night Elves", "Blood Elves"],
+      "answer": "Night Elves"
+    },
+    {
+      "question": "What is the name of the currency used to purchase heirloom items?",
+      "options": ["Gold", "Justice Points", "Darkmoon Prize Tickets", "Timewarped Badge"],
+      "answer": "Timewarped Badge"
+    },
+    {
+      "question": "Who was the final boss in the Icecrown Citadel raid?",
+      "options": ["The Lich King", "Deathwing", "Yogg-Saron", "Kil'jaeden"],
+      "answer": "The Lich King"
+    },
+    {
+      "question": "What is the maximum level of professions in Classic WoW?",
+      "options": ["300", "375", "450", "525"],
+      "answer": "300"
+    },
+    {
+      "question": "Which dungeon is located in the Blackrock Mountain?",
+      "options": ["Dire Maul", "Scholomance", "Blackrock Depths", "Stratholme"],
+      "answer": "Blackrock Depths"
+    },
+    {
+      "question": "What is the name of the Tauren starting zone?",
+      "options": ["Durotar", "Mulgore", "Tirisfal Glades", "Eversong Woods"],
+      "answer": "Mulgore"
+    },
+    {
+      "question": "Which raid features the boss Lady Vashj?",
+      "options": ["Serpentshrine Cavern", "Black Temple", "Tempest Keep", "Sunwell Plateau"],
+      "answer": "Serpentshrine Cavern"
+    },
+    {
+      "question": "In which expansion was the Transmog system introduced?",
+      "options": ["The Burning Crusade", "Wrath of the Lich King", "Cataclysm", "Mists of Pandaria"],
+      "answer": "Cataclysm"
+    },
+    {
+      "question": "Which profession allows players to create guns and scopes?",
+      "options": ["Blacksmithing", "Engineering", "Leatherworking", "Tailoring"],
+      "answer": "Engineering"
+    },
+    {
+      "question": "What is the name of the dragon that guards the Obsidian Sanctum?",
+      "options": ["Malygos", "Onyxia", "Sartharion", "Halion"],
+      "answer": "Sartharion"
+    },
+    {
+      "question": "Which expansion introduced the Monk class?",
+      "options": ["Cataclysm", "Mists of Pandaria", "Warlords of Draenor", "Legion"],
+      "answer": "Mists of Pandaria"
+    },
+    {
+      "question": "What is the main currency in World of Warcraft?",
+      "options": ["Silver", "Gold", "Platinum", "Copper"],
+      "answer": "Gold"
+    },
+    {
+      "question": "Who is the leader of the Forsaken?",
+      "options": ["Sylvanas Windrunner", "Varimathras", "Putress", "Calia Menethil"],
+      "answer": "Sylvanas Windrunner"
+    },
+    {
+      "question": "Which class was introduced in Legion expansion?",
+      "options": ["Death Knight", "Monk", "Demon Hunter", "Evoker"],
+      "answer": "Demon Hunter"
+    },
+    {
+      "question": "What is the name of the capital city of the Worgen?",
+      "options": ["Stormwind", "Darnassus", "Gilneas City", "Ironforge"],
+      "answer": "Gilneas City"
+    },
+    {
+      "question": "Which of these is NOT a battleground in World of Warcraft?",
+      "options": ["Warsong Gulch", "Arathi Basin", "Alterac Valley", "Thunder Ridge"],
+      "answer": "Thunder Ridge"
+    },
+    {
+      "question": "What is the name of the first expansion of World of Warcraft?",
+      "options": ["Wrath of the Lich King", "The Burning Crusade", "Cataclysm", "Classic"],
+      "answer": "The Burning Crusade"
+    },
+    {
+      "question": "Which class wears mail armor at higher levels?",
+      "options": ["Mage", "Rogue", "Warlock", "Shaman"],
+      "answer": "Shaman"
+    },
+    {
+      "question": "What was the name of the legendary bow dropped by Kil'jaeden in Sunwell Plateau?",
+      "options": ["Thori'dal", "Rhok'delar", "Val'anyr", "Shadowmourne"],
+      "answer": "Thori'dal"
+    },
+    {
+      "question": "Which faction guards the Dark Portal in the Blasted Lands?",
+      "options": ["Cenarion Circle", "Argent Dawn", "Scryers", "Honor Hold"],
+      "answer": "Honor Hold"
+    },
+    {
+      "question": "What item level was the gear in Molten Core?",
+      "options": ["60-70", "65-75", "70-80", "75-85"],
+      "answer": "65-75"
+    },
+    {
+      "question": "Which of these is NOT an Old God?",
+      "options": ["C'Thun", "Yogg-Saron", "N'Zoth", "Anub'arak"],
+      "answer": "Anub'arak"
+    },
+    {
+      "question": "What is the name of the undead horse mount that drops from Stratholme?",
+      "options": ["Deathcharger's Reins", "Fiery Warhorse", "Midnight's Bridle", "Swift Zulian Tiger"],
+      "answer": "Deathcharger's Reins"
+    },
+    {
+      "question": "What was the first holiday event implemented in World of Warcraft?",
+      "options": ["Lunar Festival", "Feast of Winter Veil", "Hallow's End", "Children's Week"],
+      "answer": "Feast of Winter Veil"
+    },
+    {
+      "question": "Who is the ruler of the Scourge after the defeat of the Lich King?",
+      "options": ["Sylvanas Windrunner", "Bolvar Fordragon", "Darion Mograine", "Tirion Fordring"],
+      "answer": "Bolvar Fordragon"
+    },
+    {
+      "question": "Which famous sword was purified to defeat the Lich King?",
+      "options": ["Frostmourne", "Ashbringer", "Thunderfury", "Shadowmourne"],
+      "answer": "Ashbringer"
+    },
+    {
+      "question": "What is the mount speed bonus provided by riding skill 150?",
+      "options": ["60%", "100%", "150%", "280%"],
+      "answer": "100%"
+    },
+    {
+      "question": "Where is The Exodar located?",
+      "options": ["Kalimdor", "Eastern Kingdoms", "Northrend", "Outland"],
+      "answer": "Kalimdor"
+    },
+    {
+      "question": "Which profession allows players to create magical scrolls?",
+      "options": ["Enchanting", "Scribing", "Inscription", "Tailoring"],
+      "answer": "Inscription"
+    },
+    {
+      "question": "How many bosses are in the original Naxxramas raid?",
+      "options": ["12", "15", "18", "21"],
+      "answer": "15"
+    },
+    {
+      "question": "What is the highest tier of armor in Classic WoW?",
+      "options": ["Tier 1", "Tier 2", "Tier 3", "Tier 4"],
+      "answer": "Tier 3"
+    },
+    {
+      "question": "Which tribe of trolls founded the mighty Amani Empire?",
+      "options": ["Forest Trolls", "Jungle Trolls", "Ice Trolls", "Sand Trolls"],
+      "answer": "Forest Trolls"
+    },
+    {
+      "question": "What is the name of the giant turtle that carries Pandaren starting zone?",
+      "options": ["Shen-zin Su", "Liu Lang", "Ji Firepaw", "Taran Zhu"],
+      "answer": "Shen-zin Su"
+    },
+    {
+      "question": "What type of pet is specially used by Beast Mastery hunters?",
+      "options": ["Exotic Beasts", "Mechanical", "Undead", "Elemental"],
+      "answer": "Exotic Beasts"
+    },
+    {
+      "question": "Which raid instance was released with the Wrath of the Lich King launch?",
+      "options": ["Ulduar", "Trial of the Crusader", "Naxxramas", "Icecrown Citadel"],
+      "answer": "Naxxramas"
+    },
+    {
+      "question": "What is the primary language of the Alliance?",
+      "options": ["Orcish", "Common", "Darnassian", "Gnomish"],
+      "answer": "Common"
+    },
+    {
+      "question": "Which dungeon is located in Tanaris?",
+      "options": ["Maraudon", "Zul'Farrak", "Dire Maul", "Razorfen Downs"],
+      "answer": "Zul'Farrak"
+    },
+    {
+      "question": "What is the name of the main villain in Legion expansion?",
+      "options": ["Garrosh Hellscream", "The Lich King", "Deathwing", "Sargeras"],
+      "answer": "Sargeras"
+    },
+    {
+      "question": "Which architectural style is used in Stormwind City?",
+      "options": ["Gothic", "Medieval", "Roman", "Victorian"],
+      "answer": "Medieval"
+    },
+    {
+      "question": "Who was the first Troll to become a member of the Kirin Tor?",
+      "options": ["Vol'jin", "Zul'jin", "Rokhan", "Aethas Sunreaver"],
+      "answer": "Aethas Sunreaver"
+    },
+    {
+      "question": "Which class has the spell 'Polymorph'?",
+      "options": ["Warlock", "Priest", "Mage", "Shaman"],
+      "answer": "Mage"
+    },
+    {
+      "question": "What is the name of the default UI element that tracks quests?",
+      "options": ["Quest Log", "Adventure Guide", "Objectives Tracker", "Mission Table"],
+      "answer": "Objectives Tracker"
+    },
+    {
+      "question": "What is the name of the prison that held Illidan for 10,000 years?",
+      "options": ["The Stockade", "Barrow Deeps", "The Arcatraz", "Tol Barad"],
+      "answer": "Barrow Deeps"
+    },
+    {
+      "question": "Which of these is NOT one of the Elemental Lords?",
+      "options": ["Al'Akir", "Ragnaros", "Neptulon", "C'Thun"],
+      "answer": "C'Thun"
+    },
+    {
+      "question": "What is the primary resource used by Death Knights?",
+      "options": ["Mana", "Rage", "Energy", "Runes"],
+      "answer": "Runes"
+    },
+    {
+      "question": "Which weapon type can only Druids use?",
+      "options": ["Staves", "Polearms", "Wands", "Fist Weapons"],
+      "answer": "Staves"
+    },
+    {
+      "question": "What is the maximum number of players in a raid group?",
+      "options": ["10", "25", "30", "40"],
+      "answer": "40"
+    },
+    {
+      "question": "Which of these is NOT a Druid shapeshifting form?",
+      "options": ["Bear Form", "Cat Form", "Flight Form", "Wolf Form"],
+      "answer": "Wolf Form"
+    },
+    {
+      "question": "What is the name of the arena in Orgrimmar?",
+      "options": ["Ring of Valor", "Circle of Wills", "Ring of Trials", "Circle of Blood"],
+      "answer": "Ring of Valor"
+    },
+    {
+      "question": "Who said the famous quote: 'You are not prepared!'?",
+      "options": ["Arthas", "Illidan", "Kael'thas", "Garrosh"],
+      "answer": "Illidan"
+    },
+    {
+      "question": "What is the name of the strongest metal in Warcraft lore?",
+      "options": ["Titanium", "Elementium", "Mithril", "Thorium"],
+      "answer": "Elementium"
+    },
+    {
+      "question": "What year was World of Warcraft first released?",
+      "options": ["2003", "2004", "2005", "2006"],
+      "answer": "2004"
+    },
+    {
+      "question": "Which zone contains the Caverns of Time?",
+      "options": ["Silithus", "Un'Goro Crater", "Tanaris", "Uldum"],
+      "answer": "Tanaris"
+    },
+    {
+      "question": "What is the name of the Warrior's most iconic defensive ability?",
+      "options": ["Evasion", "Shield Wall", "Divine Shield", "Ice Block"],
+      "answer": "Shield Wall"
     }
   ]
 }
