@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentQuestion: 0,
         score: 0,
         questions: [],
+        questionsToUse: 5, // We'll use 5 questions per game
         timeLimit: 15,
         timerInterval: null,
         answerSelected: false
@@ -51,91 +52,56 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.nextButton.addEventListener('click', nextQuestion);
     elements.replayButton.addEventListener('click', restartGame);
 
-    // WoW trivia questions (fallback in case API is not available)
-    const triviaQuestions = [
-        {
-            question: "Which race is known for its engineering skill and explosive inventions?",
-            options: ["Gnomes", "Dwarves", "Goblins", "Humans"],
-            answer: "Gnomes",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/3/3c/Wikiracegnome.png"
-        },
-        {
-            question: "Who is the current Warchief of the Horde?",
-            options: ["Garrosh Hellscream", "Vol'jin", "Sylvanas Windrunner", "Thrall"],
-            answer: "Thrall",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/4/4a/Thrall_the_Earth-Warder_TCG.jpg"
-        },
-        {
-            question: "Which of these is NOT one of the original playable races?",
-            options: ["Orcs", "Humans", "Blood Elves", "Tauren"],
-            answer: "Blood Elves",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/d/d0/Blood_elves_banner.jpg"
-        },
-        {
-            question: "What is the name of the main continent in classic World of Warcraft?",
-            options: ["Northrend", "Eastern Kingdoms", "Kalimdor", "Pandaria"],
-            answer: "Eastern Kingdoms",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/d/d0/Chronicle_-_Eastern_Kingdoms_map.jpg"
-        },
-        {
-            question: "Who was the first Lich King?",
-            options: ["Arthas Menethil", "Ner'zhul", "Bolvar Fordragon", "Kil'jaeden"],
-            answer: "Ner'zhul",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/5/5c/Ner%27zhul_draenei.jpg"
-        },
-        {
-            question: "Which dragon aspect was corrupted and became Deathwing?",
-            options: ["Alexstrasza", "Malygos", "Nozdormu", "Neltharion"],
-            answer: "Neltharion",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/5/51/Deathwing_Cataclysm.jpg"
-        },
-        {
-            question: "What is the capital city of the Night Elves?",
-            options: ["Orgrimmar", "Darnassus", "Silvermoon", "Undercity"],
-            answer: "Darnassus",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/7/75/Darnassus_Burning.jpg"
-        },
-        {
-            question: "Which character is known as 'The Banshee Queen'?",
-            options: ["Jaina Proudmoore", "Sylvanas Windrunner", "Tyrande Whisperwind", "Alleria Windrunner"],
-            answer: "Sylvanas Windrunner",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/a/a6/Sylvanas_in_Shadowlands.jpg"
-        },
-        {
-            question: "What class was added in the Burning Crusade expansion?",
-            options: ["Death Knight", "Monk", "Blood Elf", "Demon Hunter"],
-            answer: "Blood Elf",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/2/2a/Blood_Elves_banner.jpg"
-        },
-        {
-            question: "Who is the dwarf character shown in the login screen of Classic WoW?",
-            options: ["Brann Bronzebeard", "Magni Bronzebeard", "Muradin Bronzebeard", "Moira Thaurissan"],
-            answer: "Muradin Bronzebeard",
-            image: "https://static.wikia.nocookie.net/wowpedia/images/c/cf/Muradin_Bronzebeard_in_Howling_Fjord.jpg"
+    /**
+     * Load questions from JSON file
+     * @returns {Promise<Array>} - Promise resolving to array of questions
+     */
+    async function loadQuestions() {
+        try {
+            // Use the correct path that accounts for the base href
+            const response = await fetch('games/trivia/questions.json');
+            if (!response.ok) {
+                throw new Error('Failed to load questions');
+            }
+            const data = await response.json();
+            return data.questions || [];
+        } catch (error) {
+            console.error('Error loading questions:', error);
+            // Return empty array if there's an error
+            return [];
         }
-    ];
+    }
 
     /**
      * Start the game
      */
-    function startGame() {
+    async function startGame() {
         // Hide intro screen
         elements.introScreen.style.display = 'none';
         
         // Show loading screen
         elements.loadingContainer.classList.add('active');
         
-        // Set total questions in UI
-        elements.totalQuestions.textContent = triviaQuestions.length;
-        elements.finalTotal.textContent = triviaQuestions.length;
+        try {
+            // Load questions from JSON file
+            const allQuestions = await loadQuestions();
+            
+            if (allQuestions.length === 0) {
+                throw new Error('No questions available');
+            }
+            
+            // Select 5 random questions from the question pool
+            const randomQuestions = shuffleArray([...allQuestions]).slice(0, gameState.questionsToUse);
+            gameState.questions = randomQuestions;
+            
+            // Set total questions in UI
+            elements.totalQuestions.textContent = gameState.questionsToUse;
+            elements.finalTotal.textContent = gameState.questionsToUse;
 
-        // Initialize game with trivia questions
-        gameState.questions = shuffleArray([...triviaQuestions]);
-        gameState.currentQuestion = 0;
-        gameState.score = 0;
+            // Initialize game state
+            gameState.currentQuestion = 0;
+            gameState.score = 0;
 
-        // Use setTimeout to simulate API loading
-        setTimeout(() => {
             // Hide loading screen
             elements.loadingContainer.classList.remove('active');
             
@@ -144,7 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Start with first question
             showQuestion(gameState.currentQuestion);
-        }, 2000);
+        } catch (error) {
+            console.error('Game initialization error:', error);
+            alert('Failed to load trivia questions. Please try again later.');
+            
+            // Hide loading and go back to intro
+            elements.loadingContainer.classList.remove('active');
+            elements.introScreen.style.display = 'flex';
+        }
     }
 
     /**
@@ -162,7 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update UI
         elements.questionText.textContent = question.question;
-        elements.questionImage.style.backgroundImage = `url(${question.image})`;
+        
+        // Hide question image since we're not using images anymore
+        if (elements.questionImage) {
+            elements.questionImage.style.display = 'none';
+        }
+        
         elements.currentScore.textContent = gameState.score;
 
         // Create options
@@ -347,41 +325,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return array;
     }
-    
-    // In a real implementation, you would connect to the Blizzard API like this:
-    /*
-    async function fetchWoWData() {
-        try {
-            // Client credentials flow for Blizzard API
-            const credentials = btoa(`${clientId}:${clientSecret}`);
-            
-            // Get access token
-            const tokenResponse = await fetch('https://us.battle.net/oauth/token', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Basic ${credentials}`,
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'grant_type=client_credentials'
-            });
-            
-            const tokenData = await tokenResponse.json();
-            const accessToken = tokenData.access_token;
-            
-            // Example: Fetch character data
-            const characterResponse = await fetch('https://us.api.blizzard.com/profile/wow/character/realm/character-name?namespace=profile-us', {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Battlenet-Namespace': 'profile-us'
-                }
-            });
-            
-            const characterData = await characterResponse.json();
-            return characterData;
-        } catch (error) {
-            console.error('Error fetching WoW data:', error);
-            return null;
-        }
-    }
-    */
 });

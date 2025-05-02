@@ -1,0 +1,104 @@
+{
+  "questions": [
+    {
+      "question": "Which race is known for its engineering skill and explosive inventions?",
+      "options": ["Gnomes", "Dwarves", "Goblins", "Humans"],
+      "answer": "Gnomes"
+    },
+    {
+      "question": "Who is the current Warchief of the Horde?",
+      "options": ["Garrosh Hellscream", "Vol'jin", "Sylvanas Windrunner", "Thrall"],
+      "answer": "Thrall"
+    },
+    {
+      "question": "Which of these is NOT one of the original playable races?",
+      "options": ["Orcs", "Humans", "Blood Elves", "Tauren"],
+      "answer": "Blood Elves"
+    },
+    {
+      "question": "What is the name of the main continent in classic World of Warcraft?",
+      "options": ["Northrend", "Eastern Kingdoms", "Kalimdor", "Pandaria"],
+      "answer": "Eastern Kingdoms"
+    },
+    {
+      "question": "Who was the first Lich King?",
+      "options": ["Arthas Menethil", "Ner'zhul", "Bolvar Fordragon", "Kil'jaeden"],
+      "answer": "Ner'zhul"
+    },
+    {
+      "question": "Which dragon aspect was corrupted and became Deathwing?",
+      "options": ["Alexstrasza", "Malygos", "Nozdormu", "Neltharion"],
+      "answer": "Neltharion"
+    },
+    {
+      "question": "What is the capital city of the Night Elves?",
+      "options": ["Orgrimmar", "Darnassus", "Silvermoon", "Undercity"],
+      "answer": "Darnassus"
+    },
+    {
+      "question": "Which character is known as 'The Banshee Queen'?",
+      "options": ["Jaina Proudmoore", "Sylvanas Windrunner", "Tyrande Whisperwind", "Alleria Windrunner"],
+      "answer": "Sylvanas Windrunner"
+    },
+    {
+      "question": "What class was added in the Burning Crusade expansion?",
+      "options": ["Death Knight", "Monk", "Blood Elf", "Demon Hunter"],
+      "answer": "Blood Elf"
+    },
+    {
+      "question": "Who is the dwarf character shown in the login screen of Classic WoW?",
+      "options": ["Brann Bronzebeard", "Magni Bronzebeard", "Muradin Bronzebeard", "Moira Thaurissan"],
+      "answer": "Muradin Bronzebeard"
+    },
+    {
+      "question": "What is the name of the main villain in the Wrath of the Lich King expansion?",
+      "options": ["Illidan Stormrage", "Arthas Menethil", "Deathwing", "Garrosh Hellscream"],
+      "answer": "Arthas Menethil"
+    },
+    {
+      "question": "Which class can shapeshift into animal forms?",
+      "options": ["Shaman", "Hunter", "Druid", "Warlock"],
+      "answer": "Druid"
+    },
+    {
+      "question": "What is the name of the original home world of the Orcs?",
+      "options": ["Azeroth", "Argus", "Draenor", "Northrend"],
+      "answer": "Draenor"
+    },
+    {
+      "question": "Which of these is NOT a playable hero class in World of Warcraft?",
+      "options": ["Death Knight", "Demon Hunter", "Warlock", "Evoker"],
+      "answer": "Warlock"
+    },
+    {
+      "question": "What is the primary resource used by Rogues?",
+      "options": ["Mana", "Rage", "Energy", "Focus"],
+      "answer": "Energy"
+    },
+    {
+      "question": "Which expansion introduced the Pandaren as a playable race?",
+      "options": ["Wrath of the Lich King", "Cataclysm", "Mists of Pandaria", "Warlords of Draenor"],
+      "answer": "Mists of Pandaria"
+    },
+    {
+      "question": "What is the name of the Horde's warchief who destroyed Theramore?",
+      "options": ["Thrall", "Vol'jin", "Sylvanas Windrunner", "Garrosh Hellscream"],
+      "answer": "Garrosh Hellscream"
+    },
+    {
+      "question": "Which of these is NOT one of the four August Celestials in Pandaria?",
+      "options": ["Yu'lon", "Chi-Ji", "Xuen", "Shen-zin Su"],
+      "answer": "Shen-zin Su"
+    },
+    {
+      "question": "What profession allows players to create potions and flasks?",
+      "options": ["Inscription", "Herbalism", "Enchanting", "Alchemy"],
+      "answer": "Alchemy"
+    },
+    {
+      "question": "Which legendary weapon was wielded by Arthas as the Lich King?",
+      "options": ["Ashbringer", "Frostmourne", "Thunderfury", "Shadowmourne"],
+      "answer": "Frostmourne"
+    }
+  ]
+}
