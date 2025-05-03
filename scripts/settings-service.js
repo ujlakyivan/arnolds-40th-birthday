@@ -114,3 +114,6 @@ const SettingsService = {
     return defaultSettings;
   }
 };
+
+// Explicitly attach to window object for global access
+window.SettingsService = SettingsService;

@@ -56,10 +56,16 @@
         </div>
     </div>
     
-    <!-- Scripts -->
+    <!-- Scripts - Load utilities and Firebase configuration first -->
     <script src="scripts/utils.js"></script>
     <script src="scripts/firebase-config.js"></script>
+    
+    <!-- Service scripts need to be loaded before they're used -->
     <script src="scripts/settings-service.js"></script>
+    <script src="scripts/users-service.js"></script>
+    <script src="scripts/game-completion-service.js"></script>
+    
+    <!-- App scripts -->
     <script src="scripts/auth.js"></script>
     <script src="scripts/games.js"></script>
     <script src="scripts/app.js"></script>

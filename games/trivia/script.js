@@ -7,16 +7,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Debug: Log StorageUtils availability at startup
     console.log('StorageUtils available:', !!window.StorageUtils);
-    if (window.StorageUtils) {
-        console.log('StorageUtils methods:', {
-            getFromStorage: typeof window.StorageUtils.getFromStorage === 'function',
-            saveToStorage: typeof window.StorageUtils.saveToStorage === 'function'
-        });
-        
-        // Important: Log what's actually in storage for debugging
-        const storedSettings = window.StorageUtils.getFromStorage('siteSettings');
-        console.log('Initial siteSettings in storage:', storedSettings);
-    }
     
     // Remove the development message completely
     const devMessage = document.querySelector('.development-message');
@@ -70,29 +60,25 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.replayButton.addEventListener('click', restartGame);
 
     /**
-     * Load settings from the server or localStorage
+     * Load settings from Firebase using SettingsService
      * @returns {Promise<Object>} - Promise resolving to settings object
      */
     async function loadSettings() {
-        console.log('Attempting to load settings...');
+        console.log('Attempting to load settings from Firebase...');
         try {
-            // First try to load from server
-            const response = await fetch('../../server/settings.json');
-            if (response.ok) {
-                const serverSettings = await response.json();
-                console.log('Loaded settings from server:', serverSettings);
-                
-                // Save to localStorage for GitHub Pages compatibility
-                if (window.StorageUtils && typeof window.StorageUtils.saveToStorage === 'function') {
-                    window.StorageUtils.saveToStorage('siteSettings', serverSettings);
-                    console.log('Saved server settings to localStorage for future use');
-                }
-                
-                return serverSettings;
+            // Check if SettingsService is available
+            if (window.SettingsService && typeof window.SettingsService.getSettings === 'function') {
+                console.log('SettingsService available, loading settings from Firebase...');
+                const settings = await window.SettingsService.getSettings();
+                console.log('Loaded settings from Firebase:', settings);
+                return settings;
+            } else {
+                console.warn('SettingsService not available, falling back to local methods');
+                throw new Error('SettingsService not available');
             }
-            throw new Error('Failed to load settings from server');
         } catch (error) {
-            console.log('Server settings unavailable, trying localStorage');
+            console.error('Firebase settings unavailable:', error);
+            console.log('Trying fallback methods...');
             
             // Try all possible storage methods
             // 1. Try StorageUtils method
@@ -107,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // 2. Try direct localStorage as fallback
-            const localSettings = window.localStorage.getItem('siteSettings');
+            const localSettings = window.localStorage.getItem('gameSettings');
             if (localSettings) {
                 try {
                     const parsedSettings = JSON.parse(localSettings);
@@ -116,30 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (parseError) {
                     console.error('Error parsing localStorage settings:', parseError);
                 }
-            }
-            
-            // 3. Check for settings in raw localStorage as a last resort
-            try {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    console.log(`Found key in localStorage: ${key}`);
-                    if (key.includes('settings') || key.includes('Settings')) {
-                        try {
-                            const value = localStorage.getItem(key);
-                            const parsed = JSON.parse(value);
-                            console.log(`Found potential settings in key ${key}:`, parsed);
-                            // Check if this looks like our settings
-                            if (parsed && (parsed.questionsToUse !== undefined || parsed.timeLimit !== undefined)) {
-                                console.log('Using settings from key:', key);
-                                return parsed;
-                            }
-                        } catch (e) {
-                            console.log(`Failed to parse key ${key}`, e);
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error('Error inspecting localStorage:', e);
             }
             
             console.log('Using default settings - no valid settings found in any storage');
@@ -350,9 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scorePercentage: scorePercentage,
             completionThreshold: gameState.completionThreshold,
             isAboveThreshold: scorePercentage >= gameState.completionThreshold,
-            gameId: gameState.gameId,
-            GameCompletionUtils: !!window.GameCompletionUtils,
-            authInfo: window.StorageUtils ? window.StorageUtils.getFromStorage('authInfo', null) : null
+            gameId: gameState.gameId
         });
         
         if (scorePercentage === 100) {
@@ -369,14 +329,41 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Mark game as completed if score is equal to or higher than completion threshold
         if (scorePercentage >= gameState.completionThreshold) {
-            if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
+            if (window.GameCompletionService && typeof window.GameCompletionService.markGameCompleted === 'function') {
+                // Using GameCompletionService for Firestore instead of GameCompletionUtils
+                const authInfo = window.StorageUtils ? window.StorageUtils.getFromStorage('authInfo', null) : null;
+                if (authInfo && authInfo.username) {
+                    window.GameCompletionService.markGameCompleted(authInfo.username, gameState.gameId)
+                        .then(success => {
+                            console.log('Game completion mark attempt with Firestore:', success);
+                        })
+                        .catch(err => {
+                            console.error('Error marking game as completed with Firestore:', err);
+                            // Fallback to old method if Firestore fails
+                            if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
+                                const success = window.GameCompletionUtils.markGameCompleted(gameState.gameId);
+                                console.log('Fallback game completion mark attempt:', success);
+                            }
+                        });
+                } else {
+                    // Fallback to old method if no auth info
+                    if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
+                        const success = window.GameCompletionUtils.markGameCompleted(gameState.gameId);
+                        console.log('Fallback game completion mark attempt:', success);
+                    }
+                }
+                
+                // Add completion message to the result
+                message += ' 🏆 You\'ve completed this game!';
+            } else if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
+                // Fallback to old GameCompletionUtils if GameCompletionService not available
                 const success = window.GameCompletionUtils.markGameCompleted(gameState.gameId);
-                console.log('Game completion mark attempt:', success);
+                console.log('Game completion mark attempt with legacy method:', success);
                 
                 // Add completion message to the result
                 message += ' 🏆 You\'ve completed this game!';
             } else {
-                console.error('GameCompletionUtils not available:', window.GameCompletionUtils);
+                console.error('Neither GameCompletionService nor GameCompletionUtils available');
             }
         }
         

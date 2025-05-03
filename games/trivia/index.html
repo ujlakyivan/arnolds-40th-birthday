@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="games/game-template.css">
     <link rel="stylesheet" href="games/trivia/style.css">
+    
+    <!-- Firebase scripts need to load first -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="scripts/firebase-config.js"></script>
 </head>
 <body>
     <div class="game-container">
@@ -65,8 +71,25 @@
         </main>
     </div>
     
-    <!-- Add utils.js before other scripts to ensure it's available -->
+    <!-- Core utils should be loaded before service modules -->
     <script src="scripts/utils.js"></script>
+    
+    <!-- Service modules -->
+    <script src="scripts/settings-service.js"></script>
+    <script src="scripts/game-completion-service.js"></script>
+    
+    <!-- Make sure these services are explicitly attached to window -->
+    <script>
+        // Ensure services are attached to window object
+        window.SettingsService = SettingsService || {};
+        window.GameCompletionService = GameCompletionService || {};
+        console.log('Services attached to window:', {
+            SettingsService: !!window.SettingsService,
+            GameCompletionService: !!window.GameCompletionService
+        });
+    </script>
+    
+    <!-- Load game scripts last -->
     <script src="games/game-template.js"></script>
     <script src="games/trivia/script.js"></script>
 </body>

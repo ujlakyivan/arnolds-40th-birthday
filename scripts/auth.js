@@ -51,8 +51,9 @@ class Auth {
         }
         
         try {
-            // Try server login first
-            const response = await this.serverLogin(username, password);
+            // Try Firebase authentication first
+            const response = await UsersService.authenticateUser(username, password);
+            
             if (response.success) {
                 this.authToken = response.token;
                 this.isAuthenticated = true;
@@ -78,11 +79,11 @@ class Auth {
                 // Success notification
                 UIUtils.showNotification(`Welcome back, ${username}!`, 'success');
                 return;
-            } 
+            }
         } catch (error) {
-            console.log('Server login failed, trying client-side fallback');
+            console.log('Firebase auth failed, trying client-side fallback:', error);
             
-            // If server login fails or not available, try client-side fallback
+            // If Firebase auth fails, try client-side fallback
             const userInfo = this.credentials[username];
             if (userInfo && userInfo.password === password) {
                 this.authenticateUser(username, password, userInfo.role);
@@ -141,7 +142,6 @@ class Auth {
         if (this.isAdmin) {
             // Create admin controls if they don't exist
             this.createAdminControls();
-            this.createAdminSettingsButton();
         } else {
             // Hide admin controls if they exist
             this.hideAdminControls();
@@ -215,225 +215,6 @@ class Auth {
         });
     }
     
-    createAdminSettingsButton() {
-        // Check if admin settings button already exists
-        if (document.getElementById('admin-settings-button')) {
-            return;
-        }
-        
-        // Create settings button
-        const settingsButton = document.createElement('button');
-        settingsButton.id = 'admin-settings-button';
-        settingsButton.className = 'admin-settings-button';
-        settingsButton.textContent = '⚙️ Settings';
-        settingsButton.title = 'Game Settings';
-        
-        // Style the button
-        settingsButton.style.position = 'absolute';
-        settingsButton.style.right = '120px';  // Position next to logout button
-        settingsButton.style.top = '20px';
-        settingsButton.style.backgroundColor = '#e67e22';
-        settingsButton.style.color = 'white';
-        settingsButton.style.border = 'none';
-        settingsButton.style.borderRadius = '4px';
-        settingsButton.style.padding = '8px 16px';
-        settingsButton.style.cursor = 'pointer';
-        settingsButton.style.fontSize = '16px';
-        
-        // Add click event
-        settingsButton.addEventListener('click', this.showSettingsPanel.bind(this));
-        
-        // Find header element to append button to
-        const header = document.querySelector('.birthday-header');
-        if (header) {
-            header.appendChild(settingsButton);
-        }
-    }
-    
-    async showSettingsPanel() {
-        // Create settings overlay
-        const settingsOverlay = document.createElement('div');
-        settingsOverlay.className = 'settings-overlay';
-        
-        // Get current settings
-        let currentSettings;
-        try {
-            currentSettings = await SettingsService.getSettings();
-        } catch (err) {
-            console.error('Error loading settings:', err);
-            currentSettings = SettingsService.getDefaultSettings();
-        }
-        
-        // Create settings panel HTML
-        settingsOverlay.innerHTML = `
-            <div class="settings-panel">
-                <h2>Game Settings</h2>
-                <form id="settings-form">
-                    <div class="settings-group">
-                        <label for="questionsToUse">Questions per Game:</label>
-                        <input type="number" id="questionsToUse" min="5" max="50" value="${currentSettings.questionsToUse || 20}">
-                    </div>
-                    
-                    <div class="settings-group">
-                        <label for="timeLimit">Time Limit (seconds):</label>
-                        <input type="number" id="timeLimit" min="5" max="60" value="${currentSettings.timeLimit || 15}">
-                    </div>
-                    
-                    <div class="settings-group checkbox">
-                        <label for="enableConfetti">
-                            <input type="checkbox" id="enableConfetti" ${currentSettings.enableConfetti ? 'checked' : ''}>
-                            Enable Confetti Effects
-                        </label>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button type="button" id="cancel-settings">Cancel</button>
-                        <button type="submit" id="save-settings">Save Settings</button>
-                    </div>
-                </form>
-                <div id="settings-status" class="settings-status"></div>
-            </div>
-        `;
-        
-        // Add overlay to the page
-        document.body.appendChild(settingsOverlay);
-        
-        // Style the overlay and panel
-        this.styleSettingsPanel(settingsOverlay);
-        
-        // Add event listeners
-        document.getElementById('cancel-settings').addEventListener('click', () => {
-            settingsOverlay.remove();
-        });
-        
-        document.getElementById('settings-form').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            const statusElement = document.getElementById('settings-status');
-            statusElement.textContent = 'Saving settings...';
-            statusElement.className = 'settings-status saving';
-            
-            // Get form values
-            const newSettings = {
-                questionsToUse: parseInt(document.getElementById('questionsToUse').value, 10),
-                timeLimit: parseInt(document.getElementById('timeLimit').value, 10),
-                enableConfetti: document.getElementById('enableConfetti').checked,
-                updatedAt: new Date().toISOString()
-            };
-            
-            try {
-                // Save settings to Firebase
-                await SettingsService.updateSettings(newSettings);
-                
-                statusElement.textContent = 'Settings saved successfully!';
-                statusElement.className = 'settings-status success';
-                
-                // Close the panel after a short delay
-                setTimeout(() => {
-                    settingsOverlay.remove();
-                    UIUtils.showNotification('Settings updated successfully!', 'success', 3000);
-                    
-                    // Reload the page to apply new settings
-                    window.location.reload();
-                }, 1500);
-            } catch (err) {
-                console.error('Error saving settings:', err);
-                statusElement.textContent = 'Error saving settings: ' + err.message;
-                statusElement.className = 'settings-status error';
-            }
-        });
-    }
-    
-    styleSettingsPanel(overlay) {
-        // Style the overlay
-        overlay.style.position = 'fixed';
-        overlay.style.top = '0';
-        overlay.style.left = '0';
-        overlay.style.width = '100%';
-        overlay.style.height = '100%';
-        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-        overlay.style.display = 'flex';
-        overlay.style.justifyContent = 'center';
-        overlay.style.alignItems = 'center';
-        overlay.style.zIndex = '1000';
-        
-        // Style the panel
-        const panel = overlay.querySelector('.settings-panel');
-        panel.style.backgroundColor = 'white';
-        panel.style.padding = '30px';
-        panel.style.borderRadius = '10px';
-        panel.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
-        panel.style.width = '90%';
-        panel.style.maxWidth = '500px';
-        
-        // Style the form
-        const form = panel.querySelector('form');
-        form.style.display = 'flex';
-        form.style.flexDirection = 'column';
-        form.style.gap = '20px';
-        
-        // Style settings groups
-        const groups = panel.querySelectorAll('.settings-group');
-        groups.forEach(group => {
-            group.style.display = 'flex';
-            group.style.flexDirection = 'column';
-            group.style.gap = '5px';
-            
-            // Special styling for checkbox groups
-            if (group.classList.contains('checkbox')) {
-                group.style.flexDirection = 'row';
-                group.style.alignItems = 'center';
-            }
-        });
-        
-        // Style labels and inputs
-        const labels = panel.querySelectorAll('label');
-        labels.forEach(label => {
-            label.style.fontWeight = 'bold';
-        });
-        
-        const inputs = panel.querySelectorAll('input:not([type="checkbox"])');
-        inputs.forEach(input => {
-            input.style.padding = '8px';
-            input.style.borderRadius = '4px';
-            input.style.border = '1px solid #ccc';
-            input.style.fontSize = '16px';
-        });
-        
-        // Style button group
-        const buttonGroup = panel.querySelector('.button-group');
-        buttonGroup.style.display = 'flex';
-        buttonGroup.style.justifyContent = 'space-between';
-        buttonGroup.style.marginTop = '20px';
-        
-        // Style buttons
-        const cancelButton = panel.querySelector('#cancel-settings');
-        cancelButton.style.padding = '10px 20px';
-        cancelButton.style.backgroundColor = '#95a5a6';
-        cancelButton.style.color = 'white';
-        cancelButton.style.border = 'none';
-        cancelButton.style.borderRadius = '4px';
-        cancelButton.style.cursor = 'pointer';
-        cancelButton.style.fontSize = '16px';
-        
-        const saveButton = panel.querySelector('#save-settings');
-        saveButton.style.padding = '10px 20px';
-        saveButton.style.backgroundColor = '#2ecc71';
-        saveButton.style.color = 'white';
-        saveButton.style.border = 'none';
-        saveButton.style.borderRadius = '4px';
-        saveButton.style.cursor = 'pointer';
-        saveButton.style.fontSize = '16px';
-        
-        // Style status message
-        const status = panel.querySelector('.settings-status');
-        status.style.marginTop = '15px';
-        status.style.padding = '10px';
-        status.style.borderRadius = '4px';
-        status.style.textAlign = 'center';
-        status.style.display = 'none';  // Hidden by default
-    }
-    
     /**
      * Hide admin controls
      */
@@ -451,144 +232,94 @@ class Auth {
         // Create modal for game completion management
         const modal = this.createModal('Game Completions Management');
         
-        // Get all users and their completion status
-        const allCompletions = window.GameCompletionUtils.getAllUsersCompletions();
-        
-        // Get game data
-        const gamesInstance = window.gamesInstance || new Games();
-        const gamesList = gamesInstance.games;
-        
-        // Create modal content
-        const content = document.createElement('div');
-        
-        let contentHTML = `
-            <div class="game-completion-management">
-                <p class="completion-intro">Manage which games users have completed. These are automatically marked when users achieve a 90% or higher score.</p>
-                
-                <div class="users-completion-list">
-        `;
-        
-        // Generate user completion sections
-        Object.keys(allCompletions).forEach(username => {
-            const userCompletions = allCompletions[username];
-            const completedCount = Object.keys(userCompletions).length;
+        try {
+            // Get all users and their completion status from Firestore
+            const allCompletions = await GameCompletionService.getAllCompletions();
             
-            contentHTML += `
-                <div class="user-completion-section">
-                    <h4 class="user-completion-title">${username}</h4>
-                    <p class="user-completion-count">Completed ${completedCount} game(s)</p>
+            // Get game data
+            const gamesInstance = window.gamesInstance || new Games();
+            const gamesList = gamesInstance.games;
+            
+            // Create modal content
+            const content = document.createElement('div');
+            
+            let contentHTML = `
+                <div class="game-completion-management">
+                    <p class="completion-intro">Manage which games users have completed. These are automatically marked when users achieve a 90% or higher score.</p>
                     
-                    <div class="user-games-list">
+                    <div class="users-completion-list">
             `;
             
-            // Add all games with their completion status
-            gamesList.forEach(game => {
-                const isCompleted = userCompletions[game.id] === true;
+            // Generate user completion sections
+            Object.keys(allCompletions).forEach(username => {
+                const userCompletions = allCompletions[username];
+                const completedCount = Object.keys(userCompletions).length;
                 
                 contentHTML += `
-                    <div class="game-completion-item">
-                        <span class="game-completion-name">
-                            <span class="game-emoji">${game.emoji}</span> ${game.title}
-                        </span>
-                        <div class="game-completion-actions">
-                            <span class="game-completion-status ${isCompleted ? 'completed' : 'not-completed'}">
-                                ${isCompleted ? '✓ Completed' : '✗ Not Completed'}
+                    <div class="user-completion-section">
+                        <h4 class="user-completion-title">${username}</h4>
+                        <p class="user-completion-count">Completed ${completedCount} game(s)</p>
+                        
+                        <div class="user-games-list">
+                `;
+                
+                // Add all games with their completion status
+                gamesList.forEach(game => {
+                    const isCompleted = userCompletions[game.id] === true;
+                    
+                    contentHTML += `
+                        <div class="game-completion-item">
+                            <span class="game-completion-name">
+                                <span class="game-emoji">${game.emoji}</span> ${game.title}
                             </span>
-                            ${isCompleted ? 
-                                `<button class="reset-game-completion" data-username="${username}" data-game-id="${game.id}">Reset</button>` : 
-                                `<button class="mark-game-completed" data-username="${username}" data-game-id="${game.id}">Mark Completed</button>`
-                            }
+                            <div class="game-completion-actions">
+                                <span class="game-completion-status ${isCompleted ? 'completed' : 'not-completed'}">
+                                    ${isCompleted ? '✓ Completed' : '✗ Not Completed'}
+                                </span>
+                                ${isCompleted ? 
+                                    `<button class="reset-game-completion" data-username="${username}" data-game-id="${game.id}">Reset</button>` : 
+                                    `<button class="mark-game-completed" data-username="${username}" data-game-id="${game.id}">Mark Completed</button>`
+                                }
+                            </div>
                         </div>
+                    `;
+                });
+                
+                // Add reset all button for this user
+                contentHTML += `
+                        </div>
+                        <button class="reset-all-completions" data-username="${username}">Reset All for ${username}</button>
                     </div>
                 `;
             });
             
-            // Add reset all button for this user
+            // Close the outer divs
             contentHTML += `
                     </div>
-                    <button class="reset-all-completions" data-username="${username}">Reset All for ${username}</button>
                 </div>
             `;
-        });
-        
-        // Close the outer divs
-        contentHTML += `
-                </div>
-            </div>
-        `;
-        
-        // Set the content HTML
-        content.innerHTML = contentHTML;
-        
-        // Style the content
-        this.applyCompletionManagementStyles(content);
-        
-        // Add content to modal
-        modal.querySelector('.modal-content').appendChild(content);
-        
-        // Add event listeners for buttons
-        const resetButtons = modal.querySelectorAll('.reset-game-completion');
-        resetButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const username = button.getAttribute('data-username');
-                const gameId = parseInt(button.getAttribute('data-game-id'));
-                
-                if (window.GameCompletionUtils.resetGameCompletion(username, gameId)) {
-                    UIUtils.showNotification(`Reset completion of game #${gameId} for ${username}`, 'success');
+            
+            // Set the content HTML
+            content.innerHTML = contentHTML;
+            
+            // Style the content
+            this.applyCompletionManagementStyles(content);
+            
+            // Add content to modal
+            modal.querySelector('.modal-content').appendChild(content);
+            
+            // Add event listeners for buttons
+            const resetButtons = modal.querySelectorAll('.reset-game-completion');
+            resetButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const username = button.getAttribute('data-username');
+                    const gameId = parseInt(button.getAttribute('data-game-id'));
                     
-                    // Refresh the modal
-                    this.closeModal();
-                    this.openGameCompletions();
+                    // Use the GameCompletionService to reset the completion
+                    const success = await GameCompletionService.resetGameCompletion(username, gameId);
                     
-                    // If on the games page, refresh the games grid
-                    if (window.gamesInstance) {
-                        window.gamesInstance.loadGames();
-                    }
-                }
-            });
-        });
-        
-        const markCompletedButtons = modal.querySelectorAll('.mark-game-completed');
-        markCompletedButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const username = button.getAttribute('data-username');
-                const gameId = parseInt(button.getAttribute('data-game-id'));
-                
-                // Get all completions
-                const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
-                
-                // Get user's completion data or create if not exists
-                if (!allCompletionData[username]) {
-                    allCompletionData[username] = {};
-                }
-                
-                // Mark as completed
-                allCompletionData[username][gameId] = true;
-                
-                // Save back to storage
-                if (StorageUtils.saveToStorage('gameCompletions', allCompletionData)) {
-                    UIUtils.showNotification(`Marked game #${gameId} as completed for ${username}`, 'success');
-                    
-                    // Refresh the modal
-                    this.closeModal();
-                    this.openGameCompletions();
-                    
-                    // If on the games page, refresh the games grid
-                    if (window.gamesInstance) {
-                        window.gamesInstance.loadGames();
-                    }
-                }
-            });
-        });
-        
-        const resetAllButtons = modal.querySelectorAll('.reset-all-completions');
-        resetAllButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const username = button.getAttribute('data-username');
-                
-                if (confirm(`Are you sure you want to reset ALL game completions for ${username}?`)) {
-                    if (window.GameCompletionUtils.resetAllGameCompletions(username)) {
-                        UIUtils.showNotification(`Reset all game completions for ${username}`, 'success');
+                    if (success) {
+                        UIUtils.showNotification(`Reset completion of game #${gameId} for ${username}`, 'success');
                         
                         // Refresh the modal
                         this.closeModal();
@@ -599,128 +330,202 @@ class Auth {
                             window.gamesInstance.loadGames();
                         }
                     }
-                }
+                });
             });
-        });
+            
+            const markCompletedButtons = modal.querySelectorAll('.mark-game-completed');
+            markCompletedButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const username = button.getAttribute('data-username');
+                    const gameId = parseInt(button.getAttribute('data-game-id'));
+                    
+                    // Use the GameCompletionService to mark the game as completed
+                    const success = await GameCompletionService.markGameCompleted(username, gameId);
+                    
+                    if (success) {
+                        UIUtils.showNotification(`Marked game #${gameId} as completed for ${username}`, 'success');
+                        
+                        // Refresh the modal
+                        this.closeModal();
+                        this.openGameCompletions();
+                        
+                        // If on the games page, refresh the games grid
+                        if (window.gamesInstance) {
+                            window.gamesInstance.loadGames();
+                        }
+                    }
+                });
+            });
+            
+            const resetAllButtons = modal.querySelectorAll('.reset-all-completions');
+            resetAllButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const username = button.getAttribute('data-username');
+                    
+                    if (confirm(`Are you sure you want to reset ALL game completions for ${username}?`)) {
+                        // Use the GameCompletionService to reset all completions
+                        const success = await GameCompletionService.resetAllCompletions(username);
+                        
+                        if (success) {
+                            UIUtils.showNotification(`Reset all game completions for ${username}`, 'success');
+                            
+                            // Refresh the modal
+                            this.closeModal();
+                            this.openGameCompletions();
+                            
+                            // If on the games page, refresh the games grid
+                            if (window.gamesInstance) {
+                                window.gamesInstance.loadGames();
+                            }
+                        }
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Error loading game completions:', error);
+            const content = document.createElement('div');
+            content.innerHTML = `<p class="error-message">Error loading game completions. Please try again later.</p>`;
+            modal.querySelector('.modal-content').appendChild(content);
+        }
     }
     
     /**
-     * Apply styles to completion management
-     * @param {Element} container - The container element to style
+     * Apply styles to the game completion management UI
+     * @param {Element} contentElement - The content element to style
      */
-    applyCompletionManagementStyles(container) {
-        // Add styles to completion management
+    applyCompletionManagementStyles(contentElement) {
+        // Add styles for completion management UI
         const style = document.createElement('style');
         style.textContent = `
             .game-completion-management {
-                padding: 10px;
+                padding: 20px;
                 max-height: 70vh;
                 overflow-y: auto;
             }
+            
             .completion-intro {
-                margin-bottom: 15px;
+                margin-bottom: 20px;
                 color: #555;
-                font-style: italic;
             }
+            
             .users-completion-list {
                 display: flex;
                 flex-direction: column;
-                gap: 25px;
+                gap: 30px;
             }
+            
             .user-completion-section {
-                border: 1px solid #e1e1e1;
-                border-radius: 6px;
-                padding: 15px;
                 background-color: #f9f9f9;
+                border-radius: 8px;
+                padding: 15px;
+                border: 1px solid #e0e0e0;
             }
+            
             .user-completion-title {
-                margin: 0;
-                font-size: 1.2rem;
+                margin-top: 0;
+                margin-bottom: 5px;
                 color: #333;
+                font-size: 1.2rem;
             }
+            
             .user-completion-count {
-                margin: 5px 0 10px;
                 color: #666;
                 font-size: 0.9rem;
+                margin-bottom: 15px;
             }
+            
             .user-games-list {
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
                 margin-bottom: 15px;
             }
+            
             .game-completion-item {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 8px 12px;
+                padding: 10px;
                 background-color: white;
                 border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border: 1px solid #eee;
             }
+            
             .game-completion-name {
+                font-weight: bold;
                 display: flex;
                 align-items: center;
                 gap: 8px;
             }
+            
             .game-emoji {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
             }
+            
             .game-completion-actions {
                 display: flex;
                 align-items: center;
                 gap: 10px;
             }
+            
             .game-completion-status {
-                padding: 3px 8px;
-                border-radius: 12px;
-                font-size: 0.85rem;
+                padding: 4px 8px;
+                border-radius: 15px;
+                font-size: 0.8rem;
             }
-            .game-completion-status.completed {
+            
+            .completed {
                 background-color: #e8f5e9;
                 color: #2e7d32;
             }
-            .game-completion-status.not-completed {
-                background-color: #ffebee;
-                color: #c62828;
+            
+            .not-completed {
+                background-color: #fafafa;
+                color: #757575;
             }
-            button.reset-game-completion, 
-            button.mark-game-completed {
-                padding: 5px 10px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 0.9rem;
-            }
-            button.reset-game-completion {
-                background-color: #ffebee;
-                color: #c62828;
-            }
-            button.mark-game-completed {
-                background-color: #e8f5e9;
-                color: #2e7d32;
-            }
-            button.reset-all-completions {
-                background-color: #e53935;
+            
+            .mark-game-completed {
+                background-color: #4caf50;
                 color: white;
                 border: none;
-                padding: 8px 15px;
+                padding: 5px 10px;
                 border-radius: 4px;
                 cursor: pointer;
-                align-self: flex-start;
+                font-size: 0.8rem;
+            }
+            
+            .reset-game-completion {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.8rem;
+            }
+            
+            .reset-all-completions {
+                background-color: #ff5722;
+                color: white;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 4px;
+                cursor: pointer;
                 font-size: 0.9rem;
+                margin-top: 10px;
+                align-self: flex-start;
             }
         `;
         document.head.appendChild(style);
     }
-    
+
     async openUserManagement() {
         // Create a modal for user management
         const modal = this.createModal('User Management');
         
         try {
-            // Try to get users from server API
-            const users = await this.getUsers();
+            // Get users from Firestore
+            const users = await UsersService.getAllUsers();
             
             // Create user management content
             const content = document.createElement('div');
@@ -774,13 +579,23 @@ class Auth {
             modal.querySelector('.modal-content').appendChild(content);
             
             // Add event listeners for user actions
-            modal.querySelector('#add-user-btn').addEventListener('click', () => {
+            modal.querySelector('#add-user-btn').addEventListener('click', async () => {
                 const newUsername = document.getElementById('new-username').value;
                 const newPassword = document.getElementById('new-password').value;
                 const newRole = document.getElementById('new-role').value;
                 
                 if (newUsername && newPassword) {
-                    this.createUser(newUsername, newPassword, newRole);
+                    // Use UsersService to create user
+                    const result = await UsersService.createUser(newUsername, newPassword, newRole);
+                    
+                    if (result.success) {
+                        UIUtils.showNotification(`User ${newUsername} added successfully!`, 'success');
+                        // Refresh the modal
+                        this.closeModal();
+                        this.openUserManagement();
+                    } else {
+                        UIUtils.showNotification(result.message || 'Error adding user', 'error');
+                    }
                 } else {
                     UIUtils.showNotification('Username and password are required', 'error');
                 }
@@ -798,67 +613,39 @@ class Auth {
             
             const deleteButtons = modal.querySelectorAll('.delete-user');
             deleteButtons.forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => {
                     const userId = button.getAttribute('data-id');
                     const username = button.getAttribute('data-username');
-                    this.deleteUser(userId, username);
+                    
+                    // Prevent deleting the current user
+                    if (username === this.currentUser) {
+                        UIUtils.showNotification('Cannot delete your own account!', 'error');
+                        return;
+                    }
+                    
+                    // Confirm deletion
+                    if (!confirm(`Are you sure you want to delete user "${username}"?`)) {
+                        return;
+                    }
+                    
+                    // Use UsersService to delete user
+                    const result = await UsersService.deleteUser(userId);
+                    
+                    if (result.success) {
+                        UIUtils.showNotification(`User ${username} deleted successfully!`, 'success');
+                        // Refresh the modal
+                        this.closeModal();
+                        this.openUserManagement();
+                    } else {
+                        UIUtils.showNotification(result.message || 'Error deleting user', 'error');
+                    }
                 });
             });
         } catch (error) {
             console.error('Error getting users:', error);
-            
-            // Fallback to local storage if server API fails
-            this.openUserManagementFallback(modal);
-        }
-    }
-    
-    async getUsers() {
-        try {
-            const response = await fetch(`${this.apiBaseUrl}/users`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${this.authToken}`
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Failed to get users');
-            }
-            
-            const data = await response.json();
-            return data.users || [];
-        } catch (error) {
-            console.error('Error getting users:', error);
-            throw error;
-        }
-    }
-    
-    async createUser(username, password, role) {
-        try {
-            const response = await fetch(`${this.apiBaseUrl}/users`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.authToken}`
-                },
-                body: JSON.stringify({ username, password, role })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                // Refresh the modal
-                this.closeModal();
-                this.openUserManagement();
-                
-                // Show success notification
-                UIUtils.showNotification(`User ${username} added successfully!`, 'success');
-            } else {
-                UIUtils.showNotification(data.message || 'Error adding user', 'error');
-            }
-        } catch (error) {
-            console.error('Error creating user:', error);
-            UIUtils.showNotification('Server error. Could not create user.', 'error');
+            const content = document.createElement('div');
+            content.innerHTML = `<p class="error-message">Error loading users. Please try again later.</p>`;
+            modal.querySelector('.modal-content').appendChild(content);
         }
     }
     
@@ -872,11 +659,13 @@ class Auth {
                 <div class="edit-user-form">
                     <div class="form-group">
                         <label for="edit-username">Username:</label>
-                        <input type="text" id="edit-username" value="${username}" placeholder="Enter new username">
+                        <input type="text" id="edit-username" value="${username}" disabled>
+                        <small>Changing usernames is not supported</small>
                     </div>
                     <div class="form-group">
                         <label for="edit-password">New Password:</label>
                         <input type="password" id="edit-password" placeholder="Enter new password">
+                        <small>Leave empty to keep current password</small>
                     </div>
                     <div class="form-group">
                         <label for="edit-role">Role:</label>
@@ -894,82 +683,31 @@ class Auth {
             
             // Add event listener for save button
             modal.querySelector('#save-user-btn').addEventListener('click', async () => {
-                const newUsername = document.getElementById('edit-username').value;
                 const newPassword = document.getElementById('edit-password').value;
                 const newRole = document.getElementById('edit-role').value;
                 
-                try {
-                    const response = await fetch(`${this.apiBaseUrl}/users/${userId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${this.authToken}`
-                        },
-                        body: JSON.stringify({
-                            username: newUsername,
-                            password: newPassword || undefined,
-                            role: newRole
-                        })
-                    });
+                const updates = { role: newRole };
+                if (newPassword) {
+                    updates.password = newPassword;
+                }
+                
+                // Use UsersService to update user
+                const result = await UsersService.updateUser(userId, updates);
+                
+                if (result.success) {
+                    // Close modal
+                    this.closeModal();
+                    this.openUserManagement();
                     
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        // Close modal
-                        this.closeModal();
-                        this.openUserManagement();
-                        
-                        // Show success notification
-                        UIUtils.showNotification(`User updated successfully!`, 'success');
-                    } else {
-                        UIUtils.showNotification(data.message || 'Error updating user', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error updating user:', error);
-                    UIUtils.showNotification('Server error. Could not update user.', 'error');
+                    // Show success notification
+                    UIUtils.showNotification(`User updated successfully!`, 'success');
+                } else {
+                    UIUtils.showNotification(result.message || 'Error updating user', 'error');
                 }
             });
         } catch (error) {
             console.error('Error preparing edit user form:', error);
             UIUtils.showNotification('Error preparing edit form', 'error');
-        }
-    }
-    
-    async deleteUser(userId, username) {
-        // Prevent deleting the current user
-        if (username === this.currentUser) {
-            UIUtils.showNotification('Cannot delete your own account!', 'error');
-            return;
-        }
-        
-        // Confirm deletion
-        if (!confirm(`Are you sure you want to delete user "${username}"?`)) {
-            return;
-        }
-        
-        try {
-            const response = await fetch(`${this.apiBaseUrl}/users/${userId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${this.authToken}`
-                }
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                // Refresh the modal
-                this.closeModal();
-                this.openUserManagement();
-                
-                // Show success notification
-                UIUtils.showNotification(`User ${username} deleted successfully!`, 'success');
-            } else {
-                UIUtils.showNotification(data.message || 'Error deleting user', 'error');
-            }
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            UIUtils.showNotification('Server error. Could not delete user.', 'error');
         }
     }
     
@@ -980,190 +718,164 @@ class Auth {
         // Create modal for site settings
         const modal = this.createModal('Site Settings');
         
-        // Create site settings content
-        const content = document.createElement('div');
-        content.innerHTML = `
-            <div class="site-settings-management">
-                <p class="settings-intro">Configure global site settings and behavior.</p>
-                
-                <div class="settings-section">
-                    <h4>Game Settings</h4>
-                    <div class="form-group">
-                        <label for="questions-to-use">Number of Questions in Trivia Game:</label>
-                        <input type="number" id="questions-to-use" min="5" max="50" value="20">
-                    </div>
-                    <div class="form-group">
-                        <label for="time-limit">Time Limit per Question (seconds):</label>
-                        <input type="number" id="time-limit" min="5" max="60" value="15">
-                    </div>
-                </div>
-                
-                <div class="settings-section">
-                    <h4>Game Completion Settings</h4>
-                    <div class="form-group">
-                        <label for="completion-threshold">Completion Threshold (%):</label>
-                        <input type="number" id="completion-threshold" min="50" max="100" value="90">
-                        <small>Percentage score required to mark a game as completed</small>
-                    </div>
-                </div>
-                
-                <button id="save-settings-btn" class="primary-button">Save Settings</button>
-                <button id="reset-defaults-btn" class="secondary-button">Reset to Defaults</button>
-            </div>
-        `;
-        
-        // Add styles
-        const style = document.createElement('style');
-        style.textContent = `
-            .site-settings-management {
-                padding: 20px;
-                max-height: 70vh;
-                overflow-y: auto;
-            }
-            .settings-intro {
-                margin-bottom: 20px;
-                color: #555;
-            }
-            .settings-section {
-                margin-bottom: 25px;
-                padding: 15px;
-                background-color: #f9f9f9;
-                border-radius: 6px;
-                border: 1px solid #e1e1e1;
-            }
-            .settings-section h4 {
-                margin-top: 0;
-                margin-bottom: 15px;
-                color: #333;
-                font-size: 1.1rem;
-            }
-            .form-group small {
-                display: block;
-                color: #666;
-                font-size: 0.8rem;
-                margin-top: 5px;
-            }
-            .primary-button {
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                padding: 10px 15px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 1rem;
-                margin-right: 10px;
-            }
-            .secondary-button {
-                background-color: #f5f5f5;
-                color: #333;
-                border: 1px solid #ddd;
-                padding: 10px 15px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 1rem;
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Add content to modal
-        modal.querySelector('.modal-content').appendChild(content);
-        
-        // Add event listeners
-        modal.querySelector('#save-settings-btn').addEventListener('click', () => {
-            const settings = {
-                questionsToUse: parseInt(document.getElementById('questions-to-use').value),
-                timeLimit: parseInt(document.getElementById('time-limit').value),
-                completionThreshold: parseInt(document.getElementById('completion-threshold').value)
-            };
-            
-            // Save settings to server
-            this.saveSettings(settings);
-        });
-        
-        modal.querySelector('#reset-defaults-btn').addEventListener('click', () => {
-            if (confirm('Are you sure you want to reset all settings to defaults?')) {
-                document.getElementById('questions-to-use').value = '20';
-                document.getElementById('time-limit').value = '15';
-                document.getElementById('completion-threshold').value = '90';
-                
-                UIUtils.showNotification('Settings reset to defaults', 'info');
-            }
-        });
-        
-        // Load current settings
-        this.loadCurrentSettings();
-    }
-    
-    /**
-     * Load current settings from server or local storage
-     */
-    async loadCurrentSettings() {
         try {
-            // Try to get settings from server
-            const response = await fetch(`${this.apiBaseUrl}/settings`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${this.authToken}`
-                }
-            });
+            // Create site settings content
+            const content = document.createElement('div');
             
-            if (response.ok) {
-                const data = await response.json();
+            // Load current settings
+            SettingsService.getSettings().then(settings => {
+                // Create settings panel HTML
+                content.innerHTML = `
+                    <div class="site-settings-management">
+                        <p class="settings-intro">Configure global site settings and behavior.</p>
+                        
+                        <div class="settings-section">
+                            <h4>Game Settings</h4>
+                            <div class="form-group">
+                                <label for="questions-to-use">Number of Questions in Trivia Game:</label>
+                                <input type="number" id="questions-to-use" min="5" max="50" value="${settings.questionsToUse || 20}">
+                            </div>
+                            <div class="form-group">
+                                <label for="time-limit">Time Limit per Question (seconds):</label>
+                                <input type="number" id="time-limit" min="5" max="60" value="${settings.timeLimit || 15}">
+                            </div>
+                            <div class="form-group checkbox">
+                                <label for="enable-confetti">
+                                    <input type="checkbox" id="enable-confetti" ${settings.enableConfetti ? 'checked' : ''}>
+                                    Enable Confetti Effects
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-section">
+                            <h4>Game Completion Settings</h4>
+                            <div class="form-group">
+                                <label for="completion-threshold">Completion Threshold (%):</label>
+                                <input type="number" id="completion-threshold" min="50" max="100" value="${settings.completionThreshold || 90}">
+                                <small>Percentage score required to mark a game as completed</small>
+                            </div>
+                        </div>
+                        
+                        <button id="save-settings-btn" class="primary-button">Save Settings</button>
+                        <button id="reset-defaults-btn" class="secondary-button">Reset to Defaults</button>
+                    </div>
+                `;
                 
-                if (data.success && data.settings) {
-                    // Apply settings to form
-                    document.getElementById('questions-to-use').value = data.settings.questionsToUse || 20;
-                    document.getElementById('time-limit').value = data.settings.timeLimit || 15;
-                    document.getElementById('completion-threshold').value = data.settings.completionThreshold || 90;
-                }
-            }
-        } catch (error) {
-            console.log('Error loading settings, using defaults:', error);
-            // Use defaults if server fails
-        }
-    }
-    
-    /**
-     * Save settings to server and localStorage
-     * @param {Object} settings - Settings object to save
-     */
-    async saveSettings(settings) {
-        try {
-            // Always save to localStorage first for GitHub Pages compatibility
-            StorageUtils.saveToStorage('siteSettings', settings);
-            
-            // Then try to save to server if available
-            console.log('Using auth token:', this.authToken);
-            
-            const response = await fetch(`${this.apiBaseUrl}/settings`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.authToken}`
-                },
-                body: JSON.stringify({ settings })
+                // Add styles
+                const style = document.createElement('style');
+                style.textContent = `
+                    .site-settings-management {
+                        padding: 20px;
+                        max-height: 70vh;
+                        overflow-y: auto;
+                    }
+                    .settings-intro {
+                        margin-bottom: 20px;
+                        color: #555;
+                    }
+                    .settings-section {
+                        margin-bottom: 25px;
+                        padding: 15px;
+                        background-color: #f9f9f9;
+                        border-radius: 6px;
+                        border: 1px solid #e1e1e1;
+                    }
+                    .settings-section h4 {
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                        color: #333;
+                        font-size: 1.1rem;
+                    }
+                    .form-group small {
+                        display: block;
+                        color: #666;
+                        font-size: 0.8rem;
+                        margin-top: 5px;
+                    }
+                    .form-group.checkbox {
+                        display: flex;
+                        align-items: center;
+                    }
+                    .form-group.checkbox input {
+                        margin-right: 8px;
+                    }
+                    .primary-button {
+                        background-color: #4CAF50;
+                        color: white;
+                        border: none;
+                        padding: 10px 15px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 1rem;
+                        margin-right: 10px;
+                    }
+                    .secondary-button {
+                        background-color: #f5f5f5;
+                        color: #333;
+                        border: 1px solid #ddd;
+                        padding: 10px 15px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 1rem;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Add content to modal
+                modal.querySelector('.modal-content').appendChild(content);
+                
+                // Add event listeners
+                modal.querySelector('#save-settings-btn').addEventListener('click', async () => {
+                    const newSettings = {
+                        questionsToUse: parseInt(document.getElementById('questions-to-use').value, 10),
+                        timeLimit: parseInt(document.getElementById('time-limit').value, 10),
+                        enableConfetti: document.getElementById('enable-confetti').checked,
+                        completionThreshold: parseInt(document.getElementById('completion-threshold').value, 10),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    // Save settings using SettingsService
+                    try {
+                        const result = await SettingsService.updateSettings(newSettings);
+                        
+                        if (result.success) {
+                            UIUtils.showNotification('Settings saved successfully!', 'success');
+                            this.closeModal();
+                            
+                            // Reload the page to apply new settings
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        } else {
+                            UIUtils.showNotification(result.message || 'Error saving settings', 'error');
+                        }
+                    } catch (err) {
+                        console.error('Error saving settings:', err);
+                        UIUtils.showNotification('Error saving settings: ' + err.message, 'error');
+                    }
+                });
+                
+                modal.querySelector('#reset-defaults-btn').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                        const defaultSettings = SettingsService.getDefaultSettings();
+                        document.getElementById('questions-to-use').value = defaultSettings.questionsToUse;
+                        document.getElementById('time-limit').value = defaultSettings.timeLimit;
+                        document.getElementById('enable-confetti').checked = defaultSettings.enableConfetti;
+                        document.getElementById('completion-threshold').value = defaultSettings.completionThreshold || 90;
+                        
+                        UIUtils.showNotification('Settings reset to defaults', 'info');
+                    }
+                });
+            }).catch(err => {
+                console.error('Error loading settings:', err);
+                content.innerHTML = '<p class="error-message">Error loading settings. Please try again later.</p>';
+                modal.querySelector('.modal-content').appendChild(content);
             });
-            
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Server returned error:', response.status, errorText);
-                throw new Error(`Server error: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                UIUtils.showNotification('Settings saved successfully!', 'success');
-                this.closeModal();
-            } else {
-                UIUtils.showNotification(data.message || 'Error saving settings', 'error');
-            }
         } catch (error) {
-            console.error('Error saving settings to server:', error);
-            
-            // We already saved to localStorage, so just notify the user
-            UIUtils.showNotification('Settings saved to local storage (server unavailable)', 'success');
-            this.closeModal();
+            console.error('Error preparing settings form:', error);
+            const content = document.createElement('div');
+            content.innerHTML = '<p class="error-message">Error preparing settings form. Please try again later.</p>';
+            modal.querySelector('.modal-content').appendChild(content);
         }
     }
     
