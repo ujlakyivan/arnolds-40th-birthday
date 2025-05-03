@@ -1,5 +1,6 @@
 {
-  "questionsToUse": 1,
+  "questionsToUse": 2,
   "timeLimit": 15,
-  "completionThreshold": 90
+  "completionThreshold": 90,
+  "type": "global"
 }
