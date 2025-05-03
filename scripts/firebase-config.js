@@ -14,3 +14,18 @@ firebase.initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = firebase.firestore();
+
+// Sign in anonymously for Firestore access
+firebase.auth().signInAnonymously()
+  .then(() => {
+    console.log('Signed in anonymously to Firebase');
+  })
+  .catch((error) => {
+    console.error('Anonymous auth error:', error);
+  });
+
+// Set persistence to local for better offline experience
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .catch((error) => {
+    console.error('Error setting persistence:', error);
+  });

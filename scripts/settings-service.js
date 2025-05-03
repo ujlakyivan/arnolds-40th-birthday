@@ -5,7 +5,25 @@ const SettingsService = {
    */
   async getSettings() {
     try {
-      // First try to get from Firestore
+      // First ensure authentication is complete
+      if (!firebase.auth().currentUser) {
+        await new Promise((resolve) => {
+          const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+              unsubscribe();
+              resolve();
+            }
+          });
+          
+          // Set a timeout in case auth takes too long
+          setTimeout(() => {
+            unsubscribe();
+            resolve();
+          }, 5000);
+        });
+      }
+      
+      // Now try to get from Firestore
       const doc = await db.collection('settings').doc('global').get();
       
       if (doc.exists) {
@@ -41,6 +59,24 @@ const SettingsService = {
    */
   async updateSettings(settings) {
     try {
+      // Ensure authentication is complete before saving
+      if (!firebase.auth().currentUser) {
+        await new Promise((resolve) => {
+          const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+              unsubscribe();
+              resolve();
+            }
+          });
+          
+          // Set a timeout in case auth takes too long
+          setTimeout(() => {
+            unsubscribe();
+            resolve();
+          }, 5000);
+        });
+      }
+      
       // Save to Firestore
       await db.collection('settings').doc('global').set(settings);
       
