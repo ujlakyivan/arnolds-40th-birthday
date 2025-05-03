@@ -1,5 +1,8 @@
 class Games {
-    constructor() {
+    constructor(settings) {
+        // Store settings from cloud
+        this.settings = settings || {};
+        
         // Game data
         this.games = [
             { id: 1, title: 'Birthday Quiz', image: 'quiz.png', path: 'games/quiz/', emoji: '🎓' },
@@ -20,6 +23,10 @@ class Games {
             confettiContainer: document.getElementById('confetti-container')
         };
         
+        // Initialize confetti based on settings
+        this.enableConfetti = this.settings.enableConfetti !== undefined ? 
+            this.settings.enableConfetti : true;
+            
         this.init();
     }
     
@@ -119,6 +126,11 @@ class Games {
     }
     
     createConfetti() {
+        // Only create confetti if enabled in settings
+        if (!this.enableConfetti) {
+            return;
+        }
+        
         // Check if we already have confetti
         if (this.elements.confettiContainer && this.elements.confettiContainer.children.length > 0) {
             return;
@@ -144,6 +156,11 @@ class Games {
     }
     
     createBurstConfetti() {
+        // Only create confetti if enabled in settings
+        if (!this.enableConfetti) {
+            return;
+        }
+        
         // Create a small burst of confetti on game click
         const burstContainer = document.createElement('div');
         burstContainer.className = 'burst-confetti';

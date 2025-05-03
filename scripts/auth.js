@@ -141,6 +141,7 @@ class Auth {
         if (this.isAdmin) {
             // Create admin controls if they don't exist
             this.createAdminControls();
+            this.createAdminSettingsButton();
         } else {
             // Hide admin controls if they exist
             this.hideAdminControls();
@@ -212,6 +213,225 @@ class Auth {
         document.getElementById('site-settings').addEventListener('click', () => {
             this.openSiteSettings();
         });
+    }
+    
+    createAdminSettingsButton() {
+        // Check if admin settings button already exists
+        if (document.getElementById('admin-settings-button')) {
+            return;
+        }
+        
+        // Create settings button
+        const settingsButton = document.createElement('button');
+        settingsButton.id = 'admin-settings-button';
+        settingsButton.className = 'admin-settings-button';
+        settingsButton.textContent = '⚙️ Settings';
+        settingsButton.title = 'Game Settings';
+        
+        // Style the button
+        settingsButton.style.position = 'absolute';
+        settingsButton.style.right = '120px';  // Position next to logout button
+        settingsButton.style.top = '20px';
+        settingsButton.style.backgroundColor = '#e67e22';
+        settingsButton.style.color = 'white';
+        settingsButton.style.border = 'none';
+        settingsButton.style.borderRadius = '4px';
+        settingsButton.style.padding = '8px 16px';
+        settingsButton.style.cursor = 'pointer';
+        settingsButton.style.fontSize = '16px';
+        
+        // Add click event
+        settingsButton.addEventListener('click', this.showSettingsPanel.bind(this));
+        
+        // Find header element to append button to
+        const header = document.querySelector('.birthday-header');
+        if (header) {
+            header.appendChild(settingsButton);
+        }
+    }
+    
+    async showSettingsPanel() {
+        // Create settings overlay
+        const settingsOverlay = document.createElement('div');
+        settingsOverlay.className = 'settings-overlay';
+        
+        // Get current settings
+        let currentSettings;
+        try {
+            currentSettings = await SettingsService.getSettings();
+        } catch (err) {
+            console.error('Error loading settings:', err);
+            currentSettings = SettingsService.getDefaultSettings();
+        }
+        
+        // Create settings panel HTML
+        settingsOverlay.innerHTML = `
+            <div class="settings-panel">
+                <h2>Game Settings</h2>
+                <form id="settings-form">
+                    <div class="settings-group">
+                        <label for="questionsToUse">Questions per Game:</label>
+                        <input type="number" id="questionsToUse" min="5" max="50" value="${currentSettings.questionsToUse || 20}">
+                    </div>
+                    
+                    <div class="settings-group">
+                        <label for="timeLimit">Time Limit (seconds):</label>
+                        <input type="number" id="timeLimit" min="5" max="60" value="${currentSettings.timeLimit || 15}">
+                    </div>
+                    
+                    <div class="settings-group checkbox">
+                        <label for="enableConfetti">
+                            <input type="checkbox" id="enableConfetti" ${currentSettings.enableConfetti ? 'checked' : ''}>
+                            Enable Confetti Effects
+                        </label>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" id="cancel-settings">Cancel</button>
+                        <button type="submit" id="save-settings">Save Settings</button>
+                    </div>
+                </form>
+                <div id="settings-status" class="settings-status"></div>
+            </div>
+        `;
+        
+        // Add overlay to the page
+        document.body.appendChild(settingsOverlay);
+        
+        // Style the overlay and panel
+        this.styleSettingsPanel(settingsOverlay);
+        
+        // Add event listeners
+        document.getElementById('cancel-settings').addEventListener('click', () => {
+            settingsOverlay.remove();
+        });
+        
+        document.getElementById('settings-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const statusElement = document.getElementById('settings-status');
+            statusElement.textContent = 'Saving settings...';
+            statusElement.className = 'settings-status saving';
+            
+            // Get form values
+            const newSettings = {
+                questionsToUse: parseInt(document.getElementById('questionsToUse').value, 10),
+                timeLimit: parseInt(document.getElementById('timeLimit').value, 10),
+                enableConfetti: document.getElementById('enableConfetti').checked,
+                updatedAt: new Date().toISOString()
+            };
+            
+            try {
+                // Save settings to Firebase
+                await SettingsService.updateSettings(newSettings);
+                
+                statusElement.textContent = 'Settings saved successfully!';
+                statusElement.className = 'settings-status success';
+                
+                // Close the panel after a short delay
+                setTimeout(() => {
+                    settingsOverlay.remove();
+                    UIUtils.showNotification('Settings updated successfully!', 'success', 3000);
+                    
+                    // Reload the page to apply new settings
+                    window.location.reload();
+                }, 1500);
+            } catch (err) {
+                console.error('Error saving settings:', err);
+                statusElement.textContent = 'Error saving settings: ' + err.message;
+                statusElement.className = 'settings-status error';
+            }
+        });
+    }
+    
+    styleSettingsPanel(overlay) {
+        // Style the overlay
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.zIndex = '1000';
+        
+        // Style the panel
+        const panel = overlay.querySelector('.settings-panel');
+        panel.style.backgroundColor = 'white';
+        panel.style.padding = '30px';
+        panel.style.borderRadius = '10px';
+        panel.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
+        panel.style.width = '90%';
+        panel.style.maxWidth = '500px';
+        
+        // Style the form
+        const form = panel.querySelector('form');
+        form.style.display = 'flex';
+        form.style.flexDirection = 'column';
+        form.style.gap = '20px';
+        
+        // Style settings groups
+        const groups = panel.querySelectorAll('.settings-group');
+        groups.forEach(group => {
+            group.style.display = 'flex';
+            group.style.flexDirection = 'column';
+            group.style.gap = '5px';
+            
+            // Special styling for checkbox groups
+            if (group.classList.contains('checkbox')) {
+                group.style.flexDirection = 'row';
+                group.style.alignItems = 'center';
+            }
+        });
+        
+        // Style labels and inputs
+        const labels = panel.querySelectorAll('label');
+        labels.forEach(label => {
+            label.style.fontWeight = 'bold';
+        });
+        
+        const inputs = panel.querySelectorAll('input:not([type="checkbox"])');
+        inputs.forEach(input => {
+            input.style.padding = '8px';
+            input.style.borderRadius = '4px';
+            input.style.border = '1px solid #ccc';
+            input.style.fontSize = '16px';
+        });
+        
+        // Style button group
+        const buttonGroup = panel.querySelector('.button-group');
+        buttonGroup.style.display = 'flex';
+        buttonGroup.style.justifyContent = 'space-between';
+        buttonGroup.style.marginTop = '20px';
+        
+        // Style buttons
+        const cancelButton = panel.querySelector('#cancel-settings');
+        cancelButton.style.padding = '10px 20px';
+        cancelButton.style.backgroundColor = '#95a5a6';
+        cancelButton.style.color = 'white';
+        cancelButton.style.border = 'none';
+        cancelButton.style.borderRadius = '4px';
+        cancelButton.style.cursor = 'pointer';
+        cancelButton.style.fontSize = '16px';
+        
+        const saveButton = panel.querySelector('#save-settings');
+        saveButton.style.padding = '10px 20px';
+        saveButton.style.backgroundColor = '#2ecc71';
+        saveButton.style.color = 'white';
+        saveButton.style.border = 'none';
+        saveButton.style.borderRadius = '4px';
+        saveButton.style.cursor = 'pointer';
+        saveButton.style.fontSize = '16px';
+        
+        // Style status message
+        const status = panel.querySelector('.settings-status');
+        status.style.marginTop = '15px';
+        status.style.padding = '10px';
+        status.style.borderRadius = '4px';
+        status.style.textAlign = 'center';
+        status.style.display = 'none';  // Hidden by default
     }
     
     /**
