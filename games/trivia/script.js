@@ -5,6 +5,19 @@
 
 // Initialize when document is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Debug: Log StorageUtils availability at startup
+    console.log('StorageUtils available:', !!window.StorageUtils);
+    if (window.StorageUtils) {
+        console.log('StorageUtils methods:', {
+            getFromStorage: typeof window.StorageUtils.getFromStorage === 'function',
+            saveToStorage: typeof window.StorageUtils.saveToStorage === 'function'
+        });
+        
+        // Important: Log what's actually in storage for debugging
+        const storedSettings = window.StorageUtils.getFromStorage('siteSettings');
+        console.log('Initial siteSettings in storage:', storedSettings);
+    }
+    
     // Remove the development message completely
     const devMessage = document.querySelector('.development-message');
     if (devMessage) {
@@ -61,37 +74,75 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {Promise<Object>} - Promise resolving to settings object
      */
     async function loadSettings() {
+        console.log('Attempting to load settings...');
         try {
             // First try to load from server
             const response = await fetch('../../server/settings.json');
             if (response.ok) {
-                return await response.json();
+                const serverSettings = await response.json();
+                console.log('Loaded settings from server:', serverSettings);
+                
+                // Save to localStorage for GitHub Pages compatibility
+                if (window.StorageUtils && typeof window.StorageUtils.saveToStorage === 'function') {
+                    window.StorageUtils.saveToStorage('siteSettings', serverSettings);
+                    console.log('Saved server settings to localStorage for future use');
+                }
+                
+                return serverSettings;
             }
             throw new Error('Failed to load settings from server');
         } catch (error) {
             console.log('Server settings unavailable, trying localStorage');
-            // If server fetch fails, try StorageUtils (which handles localStorage)
+            
+            // Try all possible storage methods
+            // 1. Try StorageUtils method
             if (window.StorageUtils && typeof window.StorageUtils.getFromStorage === 'function') {
+                console.log('StorageUtils available, trying to get settings');
                 const parsedSettings = window.StorageUtils.getFromStorage('siteSettings', null);
+                console.log('StorageUtils returned:', parsedSettings);
+                
                 if (parsedSettings) {
-                    console.log('Using settings from StorageUtils/localStorage:', parsedSettings);
                     return parsedSettings;
-                }
-            } else {
-                // Fallback to direct localStorage if StorageUtils is not available
-                const localSettings = window.localStorage.getItem('siteSettings');
-                if (localSettings) {
-                    try {
-                        const parsedSettings = JSON.parse(localSettings);
-                        console.log('Using settings from direct localStorage:', parsedSettings);
-                        return parsedSettings;
-                    } catch (parseError) {
-                        console.error('Error parsing localStorage settings:', parseError);
-                    }
                 }
             }
             
-            console.log('Using default settings');
+            // 2. Try direct localStorage as fallback
+            const localSettings = window.localStorage.getItem('siteSettings');
+            if (localSettings) {
+                try {
+                    const parsedSettings = JSON.parse(localSettings);
+                    console.log('Using settings from direct localStorage:', parsedSettings);
+                    return parsedSettings;
+                } catch (parseError) {
+                    console.error('Error parsing localStorage settings:', parseError);
+                }
+            }
+            
+            // 3. Check for settings in raw localStorage as a last resort
+            try {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    console.log(`Found key in localStorage: ${key}`);
+                    if (key.includes('settings') || key.includes('Settings')) {
+                        try {
+                            const value = localStorage.getItem(key);
+                            const parsed = JSON.parse(value);
+                            console.log(`Found potential settings in key ${key}:`, parsed);
+                            // Check if this looks like our settings
+                            if (parsed && (parsed.questionsToUse !== undefined || parsed.timeLimit !== undefined)) {
+                                console.log('Using settings from key:', key);
+                                return parsed;
+                            }
+                        } catch (e) {
+                            console.log(`Failed to parse key ${key}`, e);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error inspecting localStorage:', e);
+            }
+            
+            console.log('Using default settings - no valid settings found in any storage');
             // Return default settings if there's an error
             return {
                 questionsToUse: gameState.questionsToUse,
