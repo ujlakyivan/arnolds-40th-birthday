@@ -57,18 +57,41 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.replayButton.addEventListener('click', restartGame);
 
     /**
-     * Load settings from the server
+     * Load settings from the server or localStorage
      * @returns {Promise<Object>} - Promise resolving to settings object
      */
     async function loadSettings() {
         try {
+            // First try to load from server
             const response = await fetch('../../server/settings.json');
-            if (!response.ok) {
-                throw new Error('Failed to load settings');
+            if (response.ok) {
+                return await response.json();
             }
-            return await response.json();
+            throw new Error('Failed to load settings from server');
         } catch (error) {
-            console.error('Error loading settings:', error);
+            console.log('Server settings unavailable, trying localStorage');
+            // If server fetch fails, try StorageUtils (which handles localStorage)
+            if (window.StorageUtils && typeof window.StorageUtils.getFromStorage === 'function') {
+                const parsedSettings = window.StorageUtils.getFromStorage('siteSettings', null);
+                if (parsedSettings) {
+                    console.log('Using settings from StorageUtils/localStorage:', parsedSettings);
+                    return parsedSettings;
+                }
+            } else {
+                // Fallback to direct localStorage if StorageUtils is not available
+                const localSettings = window.localStorage.getItem('siteSettings');
+                if (localSettings) {
+                    try {
+                        const parsedSettings = JSON.parse(localSettings);
+                        console.log('Using settings from direct localStorage:', parsedSettings);
+                        return parsedSettings;
+                    } catch (parseError) {
+                        console.error('Error parsing localStorage settings:', parseError);
+                    }
+                }
+            }
+            
+            console.log('Using default settings');
             // Return default settings if there's an error
             return {
                 questionsToUse: gameState.questionsToUse,

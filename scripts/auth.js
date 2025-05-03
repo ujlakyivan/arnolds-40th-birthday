@@ -904,12 +904,15 @@ class Auth {
     }
     
     /**
-     * Save settings to server
+     * Save settings to server and localStorage
      * @param {Object} settings - Settings object to save
      */
     async saveSettings(settings) {
         try {
-            // Log token for debugging
+            // Always save to localStorage first for GitHub Pages compatibility
+            StorageUtils.saveToStorage('siteSettings', settings);
+            
+            // Then try to save to server if available
             console.log('Using auth token:', this.authToken);
             
             const response = await fetch(`${this.apiBaseUrl}/settings`, {
@@ -936,15 +939,11 @@ class Auth {
                 UIUtils.showNotification(data.message || 'Error saving settings', 'error');
             }
         } catch (error) {
-            console.error('Error saving settings:', error);
+            console.error('Error saving settings to server:', error);
             
-            // Fallback to local storage
-            if (StorageUtils.saveToStorage('siteSettings', settings)) {
-                UIUtils.showNotification('Settings saved to local storage', 'success');
-                this.closeModal();
-            } else {
-                UIUtils.showNotification('Error saving settings', 'error');
-            }
+            // We already saved to localStorage, so just notify the user
+            UIUtils.showNotification('Settings saved to local storage (server unavailable)', 'success');
+            this.closeModal();
         }
     }
     
