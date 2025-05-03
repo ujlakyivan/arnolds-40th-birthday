@@ -1,5 +1,5 @@
 {
-  "questionsToUse": 20,
+  "questionsToUse": 2,
   "timeLimit": 15,
-  "enableConfetti": true
+  "completionThreshold": 90
 }

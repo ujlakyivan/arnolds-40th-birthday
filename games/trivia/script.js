@@ -21,10 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
         currentQuestion: 0,
         score: 0,
         questions: [],
-        questionsToUse: 20, // Increased from 5 to 20 questions per game
-        timeLimit: 15,
+        questionsToUse: 20, // Default value, will be overridden by settings
+        timeLimit: 15, // Default value, will be overridden by settings
+        completionThreshold: 90, // Default value, will be overridden by settings
         timerInterval: null,
-        answerSelected: false
+        answerSelected: false,
+        gameId: 4 // Trivia Challenge game ID
     };
 
     // DOM Element references
@@ -53,6 +55,28 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.startButton.addEventListener('click', startGame);
     elements.nextButton.addEventListener('click', nextQuestion);
     elements.replayButton.addEventListener('click', restartGame);
+
+    /**
+     * Load settings from the server
+     * @returns {Promise<Object>} - Promise resolving to settings object
+     */
+    async function loadSettings() {
+        try {
+            const response = await fetch('../../server/settings.json');
+            if (!response.ok) {
+                throw new Error('Failed to load settings');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            // Return default settings if there's an error
+            return {
+                questionsToUse: gameState.questionsToUse,
+                timeLimit: gameState.timeLimit,
+                completionThreshold: gameState.completionThreshold
+            };
+        }
+    }
 
     /**
      * Load questions from JSON file
@@ -85,6 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.loadingContainer.classList.add('active');
         
         try {
+            // Load settings first
+            const settings = await loadSettings();
+            
+            // Update game state with settings
+            gameState.questionsToUse = settings.questionsToUse || gameState.questionsToUse;
+            gameState.timeLimit = settings.timeLimit || gameState.timeLimit;
+            gameState.completionThreshold = settings.completionThreshold || gameState.completionThreshold;
+            
             // Load questions from JSON file
             const allQuestions = await loadQuestions();
             
@@ -237,6 +269,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const scorePercentage = (gameState.score / gameState.questions.length) * 100;
         let message = '';
         
+        // Debug info
+        console.log('Game completion check:', {
+            score: gameState.score,
+            totalQuestions: gameState.questions.length,
+            scorePercentage: scorePercentage,
+            completionThreshold: gameState.completionThreshold,
+            isAboveThreshold: scorePercentage >= gameState.completionThreshold,
+            gameId: gameState.gameId,
+            GameCompletionUtils: !!window.GameCompletionUtils,
+            authInfo: window.StorageUtils ? window.StorageUtils.getFromStorage('authInfo', null) : null
+        });
+        
         if (scorePercentage === 100) {
             message = 'Amazing! You are a true Champion of Azeroth!';
         } else if (scorePercentage >= 80) {
@@ -247,6 +291,19 @@ document.addEventListener('DOMContentLoaded', () => {
             message = 'Not bad! With some more questing, you could become a true hero.';
         } else {
             message = 'Looks like you need more time in Azeroth! Keep exploring!';
+        }
+        
+        // Mark game as completed if score is equal to or higher than completion threshold
+        if (scorePercentage >= gameState.completionThreshold) {
+            if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
+                const success = window.GameCompletionUtils.markGameCompleted(gameState.gameId);
+                console.log('Game completion mark attempt:', success);
+                
+                // Add completion message to the result
+                message += ' 🏆 You\'ve completed this game!';
+            } else {
+                console.error('GameCompletionUtils not available:', window.GameCompletionUtils);
+            }
         }
         
         elements.resultMessage.textContent = message;

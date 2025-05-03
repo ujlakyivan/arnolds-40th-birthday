@@ -24,19 +24,24 @@ class Games {
     }
     
     init() {
-        this.loadGames();
-        this.createConfetti();
+        // Check if we need to create the games grid
+        if (this.elements.gamesContainer) {
+            this.loadGames();
+        }
     }
     
     loadGames() {
-        if (!this.elements.gamesContainer) return;
-        
+        // Clear container
         this.elements.gamesContainer.innerHTML = '';
         
+        // Create game tiles
         this.games.forEach(game => {
             const gameElement = this.createGameElement(game);
             this.elements.gamesContainer.appendChild(gameElement);
         });
+        
+        // Check if all games are completed and show winning message if so
+        this.checkAllGamesCompleted();
     }
     
     createGameElement(game) {
@@ -53,6 +58,37 @@ class Games {
         title.className = 'game-title';
         title.textContent = game.title;
         
+        // Check if game is completed and add completion indicator
+        if (window.GameCompletionUtils && GameCompletionUtils.isGameCompleted(game.id)) {
+            gameDiv.classList.add('completed-game');
+            
+            // Create completion badge
+            const completionBadge = document.createElement('div');
+            completionBadge.className = 'completion-badge';
+            completionBadge.innerHTML = '✓';
+            completionBadge.title = 'Completed!';
+            
+            // Style the badge
+            completionBadge.style.position = 'absolute';
+            completionBadge.style.top = '-10px';
+            completionBadge.style.right = '-10px';
+            completionBadge.style.backgroundColor = '#2ecc71';
+            completionBadge.style.color = 'white';
+            completionBadge.style.borderRadius = '50%';
+            completionBadge.style.width = '30px';
+            completionBadge.style.height = '30px';
+            completionBadge.style.display = 'flex';
+            completionBadge.style.justifyContent = 'center';
+            completionBadge.style.alignItems = 'center';
+            completionBadge.style.fontSize = '16px';
+            completionBadge.style.fontWeight = 'bold';
+            completionBadge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            
+            // Add badge to game tile
+            gameDiv.appendChild(completionBadge);
+            gameDiv.style.position = 'relative';  // Ensure proper positioning of the badge
+        }
+        
         // Assemble the game tile
         gameDiv.appendChild(iconContainer);
         gameDiv.appendChild(title);
@@ -60,94 +96,127 @@ class Games {
         // Add click event
         gameDiv.addEventListener('click', () => {
             this.createBurstConfetti();
-            setTimeout(() => this.launchGame(game), 500);
+            this.launchGame(game);
         });
         
         return gameDiv;
     }
     
     createEmojiIcon(game) {
-        const imgPlaceholder = document.createElement('div');
-        imgPlaceholder.className = 'game-emoji-icon';
-        imgPlaceholder.style.width = '60%';
-        imgPlaceholder.style.height = '60%';
-        imgPlaceholder.style.display = 'flex';
-        imgPlaceholder.style.alignItems = 'center';
-        imgPlaceholder.style.justifyContent = 'center';
-        imgPlaceholder.style.fontSize = '2.5rem';
-        imgPlaceholder.style.marginBottom = '10px';
-        imgPlaceholder.innerHTML = game.emoji || '🎮';
+        // Create container for emoji
+        const container = document.createElement('div');
+        container.className = 'game-icon emoji-icon';
         
-        return imgPlaceholder;
+        // Create emoji element
+        const emoji = document.createElement('div');
+        emoji.className = 'emoji';
+        emoji.textContent = game.emoji;
+        
+        // Add to container
+        container.appendChild(emoji);
+        
+        return container;
     }
     
     createConfetti() {
-        // Create random confetti pieces that fall occasionally
-        const colors = ['#ff6b6b', '#4ecdc4', '#ffbe0b', '#ff9f68', '#6a89cc', '#9b59b6'];
-        const shapes = ['circle', 'square', 'triangle'];
-        
-        // Initial confetti burst
-        for (let i = 0; i < 50; i++) {
-            setTimeout(() => this.createConfettiPiece(colors, shapes), i * 100);
+        // Check if we already have confetti
+        if (this.elements.confettiContainer && this.elements.confettiContainer.children.length > 0) {
+            return;
         }
         
-        // Occasional confetti
-        setInterval(() => {
-            this.createConfettiPiece(colors, shapes);
-        }, 2000);
+        const container = this.elements.confettiContainer || document.createElement('div');
+        
+        // Create confetti on first use
+        if (!this.elements.confettiContainer) {
+            container.id = 'confetti-container';
+            document.body.appendChild(container);
+            this.elements.confettiContainer = container;
+        }
+        
+        // Colors and shapes for confetti
+        const colors = ['#f94144', '#f3722c', '#f8961e', '#f9844a', '#f9c74f', '#90be6d', '#43aa8b'];
+        const shapes = ['●', '■', '★', '✶', '♦', '▲', '✦'];
+        
+        // Create confetti pieces
+        for (let i = 0; i < 30; i++) {
+            this.createConfettiPiece(container, colors, shapes);
+        }
     }
     
     createBurstConfetti() {
-        const colors = ['#ff6b6b', '#4ecdc4', '#ffbe0b', '#ff9f68', '#6a89cc', '#9b59b6'];
-        const shapes = ['circle', 'square', 'triangle'];
+        // Create a small burst of confetti on game click
+        const burstContainer = document.createElement('div');
+        burstContainer.className = 'burst-confetti';
+        document.body.appendChild(burstContainer);
         
-        for (let i = 0; i < 30; i++) {
-            setTimeout(() => this.createConfettiPiece(colors, shapes), i * 50);
+        // Colors and shapes for confetti
+        const colors = ['#f94144', '#f3722c', '#f8961e', '#f9844a', '#f9c74f', '#90be6d', '#43aa8b'];
+        const shapes = ['●', '■', '★', '✶', '♦', '▲', '✦'];
+        
+        // Create confetti pieces
+        for (let i = 0; i < 10; i++) {
+            this.createConfettiPiece(burstContainer, colors, shapes, true);
         }
+        
+        // Remove after animation
+        setTimeout(() => {
+            burstContainer.remove();
+        }, 2000);
     }
     
-    createConfettiPiece(colors, shapes) {
-        if (!this.elements.confettiContainer) return;
-        
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
+    createConfettiPiece(element, colors, shapes, isBurst = false) {
+        // Create confetti piece
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
         
         // Random properties
         const color = colors[Math.floor(Math.random() * colors.length)];
         const shape = shapes[Math.floor(Math.random() * shapes.length)];
-        const size = Math.random() * 10 + 5; // 5-15px
-        const left = Math.random() * 100; // 0-100%
+        const size = Math.random() * 1 + 0.5; // Between 0.5 and 1.5rem
+        const startX = Math.random() * 100; // Starting X position (percent)
         
-        // Apply styles based on shape
-        confetti.style.left = `${left}%`;
-        confetti.style.width = `${size}px`;
-        confetti.style.height = `${size}px`;
-        confetti.style.backgroundColor = color;
+        // Additional randomness for burst animation
+        const duration = isBurst ? Math.random() * 1 + 1 : Math.random() * 5 + 5; // Animation duration
+        const delay = isBurst ? 0 : Math.random() * 5; // Delay start for regular confetti
         
-        if (shape === 'circle') {
-            confetti.style.borderRadius = '50%';
-        } else if (shape === 'triangle') {
-            confetti.style.width = '0';
-            confetti.style.height = '0';
-            confetti.style.backgroundColor = 'transparent';
-            confetti.style.borderLeft = `${size/2}px solid transparent`;
-            confetti.style.borderRight = `${size/2}px solid transparent`;
-            confetti.style.borderBottom = `${size}px solid ${color}`;
+        // Set content and style
+        piece.textContent = shape;
+        piece.style.color = color;
+        piece.style.fontSize = `${size}rem`;
+        piece.style.left = `${startX}%`;
+        piece.style.animationDuration = `${duration}s`;
+        piece.style.animationDelay = `${delay}s`;
+        
+        // Only add animation if it's a burst
+        if (isBurst) {
+            piece.style.position = 'absolute';
+            piece.style.animation = `burstAnim ${duration}s ease-out forwards`;
+            
+            // Random direction for burst
+            const angle = Math.random() * 360;
+            const distance = Math.random() * 100 + 50;
+            piece.style.transform = `translateY(0px) rotate(0deg)`;
+            
+            // Use custom keyframes for each piece
+            const keyframes = `
+                @keyframes burstAnim {
+                    0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+                    100% { transform: translateY(${Math.sin(angle) * distance}px) translateX(${Math.cos(angle) * distance}px) rotate(${Math.random() * 360}deg); opacity: 0; }
+                }
+            `;
+            
+            // Add keyframes to document
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = keyframes;
+            document.head.appendChild(styleSheet);
+            
+            // Update animation name to use these keyframes
+            const animName = `burstAnim_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+            styleSheet.textContent = keyframes.replace('burstAnim', animName);
+            piece.style.animation = `${animName} ${duration}s ease-out forwards`;
         }
         
-        // Random animation duration
-        const duration = Math.random() * 2 + 2; // 2-4s
-        confetti.style.animationDuration = `${duration}s`;
-        
-        // Add to DOM
-        this.elements.confettiContainer.appendChild(confetti);
-        
-        // Remove after animation completes
-        setTimeout(() => {
-            if (confetti.parentNode === this.elements.confettiContainer) {
-                this.elements.confettiContainer.removeChild(confetti);
-            }
-        }, duration * 1000);
+        element.appendChild(piece);
     }
     
     launchGame(game) {
@@ -169,32 +238,30 @@ class Games {
     }
     
     showDevelopmentMessage(game) {
-        // Remove existing message if present
-        const existingMessage = document.getElementById('dev-message-overlay');
-        if (existingMessage) {
-            existingMessage.remove();
-        }
-        
-        // Create message overlay
+        // Create overlay for development message
         const messageOverlay = document.createElement('div');
-        messageOverlay.id = 'dev-message-overlay';
         messageOverlay.className = 'dev-message-overlay';
         
-        // Create message container with content
+        // Message content
         messageOverlay.innerHTML = `
             <div class="dev-message-container">
-                <div class="dev-message-emoji">${game.emoji || '🎮'}</div>
-                <h2 class="dev-message-title">Game Under Development</h2>
-                <p class="dev-message-text">"${game.title}" is currently under development for Arnold's 40th birthday celebration.</p>
-                <button id="close-dev-message" class="dev-message-button">Close</button>
+                <h2>Under Construction</h2>
+                <div class="game-icon-large emoji-icon">
+                    <div class="emoji">${game.emoji}</div>
+                </div>
+                <p>The game "${game.title}" is currently under development for Arnold's 40th birthday celebration.</p>
+                <p>Check back soon to play this exciting game!</p>
+                <button id="close-dev-message" class="close-button">Close</button>
             </div>
         `;
         
-        // Apply inline styles
+        // Add to page
+        document.body.appendChild(messageOverlay);
+        
+        // Apply styles
         this.applyDevMessageStyles(messageOverlay);
         
-        // Add to DOM and prevent scrolling
-        document.body.appendChild(messageOverlay);
+        // Prevent scrolling while overlay is active
         document.body.style.overflow = 'hidden';
         
         // Add close button event
@@ -206,7 +273,7 @@ class Games {
     }
     
     applyDevMessageStyles(overlay) {
-        // Apply overlay styles
+        // Apply styles to the development message overlay
         overlay.style.position = 'fixed';
         overlay.style.top = '0';
         overlay.style.left = '0';
@@ -214,52 +281,191 @@ class Games {
         overlay.style.height = '100%';
         overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
         overlay.style.display = 'flex';
-        overlay.style.flexDirection = 'column';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.zIndex = '999';
+        
+        const messageContainer = overlay.querySelector('.dev-message-container');
+        messageContainer.style.backgroundColor = 'white';
+        messageContainer.style.padding = '30px';
+        messageContainer.style.borderRadius = '10px';
+        messageContainer.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+        messageContainer.style.textAlign = 'center';
+        messageContainer.style.maxWidth = '90%';
+        messageContainer.style.width = '500px';
+        
+        const closeButton = overlay.querySelector('#close-dev-message');
+        closeButton.style.marginTop = '20px';
+        closeButton.style.padding = '10px 25px';
+        closeButton.style.backgroundColor = '#3498db';
+        closeButton.style.color = 'white';
+        closeButton.style.border = 'none';
+        closeButton.style.borderRadius = '5px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.fontSize = '16px';
+        closeButton.style.fontWeight = 'bold';
+        
+        const gameLargeIcon = overlay.querySelector('.game-icon-large');
+        if (gameLargeIcon) {
+            gameLargeIcon.style.fontSize = '5rem';
+            gameLargeIcon.style.margin = '20px auto';
+        }
+    }
+    
+    checkAllGamesCompleted() {
+        if (!window.GameCompletionUtils) return;
+        
+        // Get all active game IDs (only ones that have an actual path)
+        const activeGameIds = this.games.filter(game => game.path).map(game => game.id);
+        
+        // Check if all games are completed
+        if (GameCompletionUtils.areAllGamesCompleted(activeGameIds)) {
+            this.showWinningMessage();
+        }
+    }
+    
+    showWinningMessage() {
+        // Create overlay for winning message
+        const messageOverlay = document.createElement('div');
+        messageOverlay.className = 'winning-message-overlay';
+        
+        // Message content
+        messageOverlay.innerHTML = `
+            <div class="winning-message-container">
+                <h2>Congratulations!</h2>
+                <div class="trophy-icon">🏆</div>
+                <p class="winning-title">You've completed all the games!</p>
+                <p class="winning-subtitle">Arnold would be proud of your dedication and gaming skills!</p>
+                <p class="winning-message">Thanks for being such a great sport and celebrating Arnold's 40th birthday in style!</p>
+                <button id="close-winning-message" class="close-button">Continue</button>
+            </div>
+        `;
+        
+        // Add to page
+        document.body.appendChild(messageOverlay);
+        
+        // Apply styles
+        this.applyWinningMessageStyles(messageOverlay);
+        
+        // Prevent scrolling while overlay is active
+        document.body.style.overflow = 'hidden';
+        
+        // Create massive confetti celebration
+        this.createMassiveConfetti();
+        
+        // Add close button event
+        document.getElementById('close-winning-message').addEventListener('click', () => {
+            messageOverlay.remove();
+            document.body.style.overflow = '';
+            UIUtils.showNotification('You\'re amazing! All games completed! 🎉', 'success', 5000);
+        });
+    }
+    
+    applyWinningMessageStyles(overlay) {
+        // Apply styles to the winning message overlay
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+        overlay.style.display = 'flex';
         overlay.style.justifyContent = 'center';
         overlay.style.alignItems = 'center';
         overlay.style.zIndex = '1000';
-        overlay.style.padding = '20px';
-        overlay.style.color = 'white';
         
-        // Find and style the container
-        const container = overlay.querySelector('.dev-message-container');
-        if (container) {
-            container.style.backgroundColor = '#2c3e50';
-            container.style.padding = '30px';
-            container.style.borderRadius = '10px';
-            container.style.textAlign = 'center';
-            container.style.maxWidth = '80%';
-        }
+        const messageContainer = overlay.querySelector('.winning-message-container');
+        messageContainer.style.backgroundColor = 'white';
+        messageContainer.style.padding = '40px';
+        messageContainer.style.borderRadius = '15px';
+        messageContainer.style.boxShadow = '0 0 30px rgba(255,215,0,0.7)';
+        messageContainer.style.textAlign = 'center';
+        messageContainer.style.maxWidth = '90%';
+        messageContainer.style.width = '600px';
+        messageContainer.style.border = '3px solid gold';
+        messageContainer.style.animation = 'pulse 2s infinite';
         
-        // Style emoji
-        const emoji = overlay.querySelector('.dev-message-emoji');
-        if (emoji) {
-            emoji.style.fontSize = '3rem';
-            emoji.style.marginBottom = '20px';
-        }
+        // Add keyframe animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { box-shadow: 0 0 30px rgba(255,215,0,0.7); }
+                50% { box-shadow: 0 0 50px rgba(255,215,0,0.9); }
+                100% { box-shadow: 0 0 30px rgba(255,215,0,0.7); }
+            }
+            
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
         
-        // Style title
-        const title = overlay.querySelector('.dev-message-title');
-        if (title) {
-            title.style.fontSize = '1.5rem';
-            title.style.marginBottom = '15px';
-        }
+        const title = overlay.querySelector('h2');
+        title.style.color = '#f1c40f';
+        title.style.fontSize = '36px';
+        title.style.margin = '0 0 20px 0';
         
-        // Style text
-        const text = overlay.querySelector('.dev-message-text');
-        if (text) {
-            text.style.marginBottom = '20px';
-        }
+        const trophyIcon = overlay.querySelector('.trophy-icon');
+        trophyIcon.style.fontSize = '80px';
+        trophyIcon.style.margin = '20px 0';
+        trophyIcon.style.display = 'block';
+        trophyIcon.style.animation = 'bounce 2s infinite';
         
-        // Style button
-        const button = overlay.querySelector('.dev-message-button');
-        if (button) {
-            button.style.padding = '10px 20px';
-            button.style.backgroundColor = '#e74c3c';
-            button.style.color = 'white';
-            button.style.border = 'none';
-            button.style.borderRadius = '4px';
-            button.style.cursor = 'pointer';
+        const winningTitle = overlay.querySelector('.winning-title');
+        winningTitle.style.fontSize = '24px';
+        winningTitle.style.fontWeight = 'bold';
+        winningTitle.style.margin = '20px 0';
+        
+        const winningSubtitle = overlay.querySelector('.winning-subtitle');
+        winningSubtitle.style.fontSize = '18px';
+        winningSubtitle.style.margin = '10px 0';
+        
+        const winningMessage = overlay.querySelector('.winning-message');
+        winningMessage.style.margin = '20px 0';
+        
+        const closeButton = overlay.querySelector('#close-winning-message');
+        closeButton.style.marginTop = '30px';
+        closeButton.style.padding = '12px 30px';
+        closeButton.style.backgroundColor = '#f1c40f';
+        closeButton.style.color = 'white';
+        closeButton.style.border = 'none';
+        closeButton.style.borderRadius = '5px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.fontSize = '18px';
+        closeButton.style.fontWeight = 'bold';
+        closeButton.style.transition = 'all 0.3s';
+        
+        // Add hover effect
+        closeButton.onmouseover = () => {
+            closeButton.style.backgroundColor = '#f39c12';
+            closeButton.style.transform = 'scale(1.05)';
+        };
+        closeButton.onmouseout = () => {
+            closeButton.style.backgroundColor = '#f1c40f';
+            closeButton.style.transform = 'scale(1)';
+        };
+    }
+    
+    createMassiveConfetti() {
+        // Create a massive confetti celebration
+        const confettiContainer = document.createElement('div');
+        confettiContainer.className = 'massive-confetti';
+        document.body.appendChild(confettiContainer);
+        
+        // Colors and shapes for festive confetti
+        const colors = ['#f94144', '#f3722c', '#f8961e', '#f9844a', '#f9c74f', 
+                        '#90be6d', '#43aa8b', '#577590', '#0096c7', '#ffbe0b',
+                        '#fb5607', '#ff006e', '#8338ec', '#3a86ff', '#ef476f'];
+        const shapes = ['●', '■', '★', '✶', '♦', '▲', '✦', '♥', '✨', '✯'];
+        
+        // Create lots of confetti pieces
+        for (let i = 0; i < 150; i++) {
+            setTimeout(() => {
+                if (document.body.contains(confettiContainer)) {
+                    this.createConfettiPiece(confettiContainer, colors, shapes);
+                }
+            }, i * 50); // Stagger the creation for a continuous effect
         }
     }
 }
