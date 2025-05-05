@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize games component with settings
     const games = new Games(gameSettings);
     
+    // Store games instance in window object for global access
+    window.gamesInstance = games;
+    
     // Set default values for testing
     if (location.search.includes('autofill')) {
         document.getElementById('username').value = 'guest';

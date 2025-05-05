@@ -5,24 +5,29 @@ const GameCompletionService = {
    */
   async getAllCompletions() {
     try {
-      // Wait for Firebase authentication
-      await this.ensureAuth();
-      
-      // Get completions collection
-      const completionsSnapshot = await db.collection('gameCompletions').get();
-      const allCompletions = {};
-      
-      completionsSnapshot.forEach(doc => {
-        const data = doc.data();
-        allCompletions[data.username] = data.completions || {};
-      });
-      
-      return allCompletions;
+      // Try to get completions from Firestore
+      try {
+        const completionsSnapshot = await db.collection('gameCompletions').get();
+        const allCompletions = {};
+        
+        completionsSnapshot.forEach(doc => {
+          const data = doc.data();
+          allCompletions[data.username] = data.completions || {};
+        });
+        
+        return allCompletions;
+      } catch (firestoreErr) {
+        // Handle Firestore permission errors gracefully
+        console.warn('Could not access Firestore game completions - using empty data:', firestoreErr.message);
+        
+        // If we can't access Firestore due to permissions, return empty data
+        // This allows the UI to still function without errors
+        return {};
+      }
     } catch (err) {
       console.error('Error getting game completions from Firestore:', err);
-      
-      // Fallback to local storage
-      return StorageUtils.getFromStorage('gameCompletions', {});
+      // Return empty object as fallback
+      return {};
     }
   },
   
@@ -31,27 +36,27 @@ const GameCompletionService = {
    */
   async getUserCompletions(username) {
     try {
-      // Wait for Firebase authentication
-      await this.ensureAuth();
-      
-      // Get user's completions document
-      const userCompletionsRef = await db.collection('gameCompletions')
-        .where('username', '==', username)
-        .limit(1)
-        .get();
-      
-      if (!userCompletionsRef.empty) {
-        const doc = userCompletionsRef.docs[0];
-        return doc.data().completions || {};
+      try {
+        // Get user's completions document
+        const userCompletionsRef = await db.collection('gameCompletions')
+          .where('username', '==', username)
+          .limit(1)
+          .get();
+        
+        if (!userCompletionsRef.empty) {
+          const doc = userCompletionsRef.docs[0];
+          return doc.data().completions || {};
+        }
+      } catch (firestoreErr) {
+        console.warn(`Could not access Firestore completions for user ${username}:`, firestoreErr.message);
       }
       
+      // Return empty object if not found or permissions error
       return {};
     } catch (err) {
       console.error(`Error getting completions for user ${username}:`, err);
-      
-      // Fallback to local storage
-      const allCompletions = StorageUtils.getFromStorage('gameCompletions', {});
-      return allCompletions[username] || {};
+      // Return empty object as fallback
+      return {};
     }
   },
   
@@ -87,26 +92,10 @@ const GameCompletionService = {
         });
       }
       
-      // Update local storage
-      const allCompletions = StorageUtils.getFromStorage('gameCompletions', {});
-      if (!allCompletions[username]) {
-        allCompletions[username] = {};
-      }
-      allCompletions[username][gameId] = true;
-      StorageUtils.saveToStorage('gameCompletions', allCompletions);
-      
       return true;
     } catch (err) {
       console.error(`Error marking game ${gameId} as completed for ${username}:`, err);
-      
-      // Fallback to local storage only
-      const allCompletions = StorageUtils.getFromStorage('gameCompletions', {});
-      if (!allCompletions[username]) {
-        allCompletions[username] = {};
-      }
-      allCompletions[username][gameId] = true;
-      
-      return StorageUtils.saveToStorage('gameCompletions', allCompletions);
+      return false;
     }
   },
   
@@ -133,24 +122,9 @@ const GameCompletionService = {
         });
       }
       
-      // Update local storage
-      const allCompletions = StorageUtils.getFromStorage('gameCompletions', {});
-      if (allCompletions[username] && allCompletions[username][gameId]) {
-        delete allCompletions[username][gameId];
-        StorageUtils.saveToStorage('gameCompletions', allCompletions);
-      }
-      
       return true;
     } catch (err) {
       console.error(`Error resetting game ${gameId} completion for ${username}:`, err);
-      
-      // Fallback to local storage only
-      const allCompletions = StorageUtils.getFromStorage('gameCompletions', {});
-      if (allCompletions[username] && allCompletions[username][gameId]) {
-        delete allCompletions[username][gameId];
-        return StorageUtils.saveToStorage('gameCompletions', allCompletions);
-      }
-      
       return false;
     }
   },
@@ -178,49 +152,27 @@ const GameCompletionService = {
         });
       }
       
-      // Update local storage
-      const allCompletions = StorageUtils.getFromStorage('gameCompletions', {});
-      if (allCompletions[username]) {
-        allCompletions[username] = {};
-        StorageUtils.saveToStorage('gameCompletions', allCompletions);
-      }
-      
       return true;
     } catch (err) {
       console.error(`Error resetting all completions for ${username}:`, err);
-      
-      // Fallback to local storage only
-      const allCompletions = StorageUtils.getFromStorage('gameCompletions', {});
-      if (allCompletions[username]) {
-        allCompletions[username] = {};
-        return StorageUtils.saveToStorage('gameCompletions', allCompletions);
-      }
-      
       return false;
     }
   },
   
   /**
-   * Ensure Firebase auth is initialized
+   * Ensure authentication is ready - without relying on Firebase Auth
    */
   async ensureAuth() {
-    if (!firebase.auth().currentUser) {
-      return new Promise((resolve) => {
-        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-          if (user) {
-            unsubscribe();
-            resolve();
-          }
-        });
-        
-        // Set a timeout in case auth takes too long
-        setTimeout(() => {
-          unsubscribe();
-          resolve();
-        }, 5000);
-      });
+    // Check if we have auth info in sessionStorage
+    const authInfo = JSON.parse(sessionStorage.getItem('authInfo'));
+    
+    if (authInfo && authInfo.token) {
+      // We have authentication info, proceed
+      return Promise.resolve();
     }
-    return Promise.resolve();
+    
+    // For operations that require authentication
+    return Promise.reject(new Error('Authentication required'));
   }
 };
 

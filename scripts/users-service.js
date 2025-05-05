@@ -26,15 +26,7 @@ const UsersService = {
       return users;
     } catch (err) {
       console.error('Error getting users from Firestore:', err);
-      
-      // Fallback to local storage
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      return Object.keys(localUsers).map(username => ({
-        id: btoa(username), // Use base64 of username as ID
-        username,
-        role: localUsers[username].role,
-        createdAt: localUsers[username].createdAt || new Date().toISOString()
-      }));
+      throw new Error('Failed to get users: ' + err.message);
     }
   },
   
@@ -66,15 +58,6 @@ const UsersService = {
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       
-      // Also update local storage for offline mode
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      localUsers[username] = {
-        passwordHash,
-        role,
-        createdAt: new Date().toISOString()
-      };
-      StorageUtils.saveToStorage('users', localUsers);
-      
       return { 
         success: true, 
         user: {
@@ -85,35 +68,7 @@ const UsersService = {
       };
     } catch (err) {
       console.error('Error creating user in Firestore:', err);
-      
-      // Fallback to local storage only
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      
-      // Check if user exists in local storage
-      if (localUsers[username]) {
-        return { success: false, message: 'Username already exists' };
-      }
-      
-      // Add user to local storage
-      const passwordHash = btoa(`${username}:${password}`);
-      localUsers[username] = {
-        passwordHash,
-        role,
-        createdAt: new Date().toISOString()
-      };
-      
-      if (StorageUtils.saveToStorage('users', localUsers)) {
-        return { 
-          success: true, 
-          user: {
-            id: btoa(username),
-            username,
-            role
-          }
-        };
-      }
-      
-      return { success: false, message: 'Failed to create user' };
+      return { success: false, message: 'Failed to create user: ' + err.message };
     }
   },
   
@@ -144,47 +99,10 @@ const UsersService = {
       // Update in Firestore
       await userRef.update(updateData);
       
-      // Update in local storage for offline mode
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      
-      if (localUsers[userData.username]) {
-        if (updates.password) {
-          localUsers[userData.username].passwordHash = updateData.passwordHash;
-        }
-        
-        if (updates.role) {
-          localUsers[userData.username].role = updates.role;
-        }
-        
-        StorageUtils.saveToStorage('users', localUsers);
-      }
-      
       return { success: true };
     } catch (err) {
       console.error('Error updating user in Firestore:', err);
-      
-      // Try local storage fallback
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      const username = atob(userId).split(':')[0]; // Extract username from base64 ID
-      
-      if (!localUsers[username]) {
-        return { success: false, message: 'User not found' };
-      }
-      
-      // Update locally
-      if (updates.password) {
-        localUsers[username].passwordHash = btoa(`${username}:${updates.password}`);
-      }
-      
-      if (updates.role) {
-        localUsers[username].role = updates.role;
-      }
-      
-      if (StorageUtils.saveToStorage('users', localUsers)) {
-        return { success: true };
-      }
-      
-      return { success: false, message: 'Failed to update user' };
+      return { success: false, message: 'Failed to update user: ' + err.message };
     }
   },
   
@@ -203,38 +121,13 @@ const UsersService = {
         return { success: false, message: 'User not found' };
       }
       
-      const userData = userDoc.data();
-      
       // Delete from Firestore
       await userRef.delete();
-      
-      // Delete from local storage
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      if (localUsers[userData.username]) {
-        delete localUsers[userData.username];
-        StorageUtils.saveToStorage('users', localUsers);
-      }
       
       return { success: true };
     } catch (err) {
       console.error('Error deleting user from Firestore:', err);
-      
-      // Try local storage fallback
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      const username = atob(userId).split(':')[0]; // Extract username from base64 ID
-      
-      if (!localUsers[username]) {
-        return { success: false, message: 'User not found' };
-      }
-      
-      // Delete locally
-      delete localUsers[username];
-      
-      if (StorageUtils.saveToStorage('users', localUsers)) {
-        return { success: true };
-      }
-      
-      return { success: false, message: 'Failed to delete user' };
+      return { success: false, message: 'Failed to delete user: ' + err.message };
     }
   },
   
@@ -243,9 +136,7 @@ const UsersService = {
    */
   async authenticateUser(username, password) {
     try {
-      // Wait for authentication
-      await this.ensureAuth();
-      
+      // Try Firestore authentication
       // Check against Firestore
       const userSnapshot = await db.collection('users')
         .where('username', '==', username)
@@ -277,50 +168,26 @@ const UsersService = {
       return { success: false, message: 'Invalid username or password' };
     } catch (err) {
       console.error('Error authenticating with Firestore:', err);
-      
-      // Fallback to local storage
-      const localUsers = StorageUtils.getFromStorage('users', {});
-      
-      if (localUsers[username]) {
-        const passwordHash = btoa(`${username}:${password}`);
-        
-        if (localUsers[username].passwordHash === passwordHash) {
-          return {
-            success: true,
-            token: passwordHash,
-            user: {
-              id: btoa(username),
-              username,
-              role: localUsers[username].role
-            }
-          };
-        }
-      }
-      
-      return { success: false, message: 'Invalid username or password' };
+      return { success: false, message: 'Authentication failed: ' + err.message };
     }
   },
   
   /**
-   * Ensure Firebase auth is initialized
+   * Ensure authentication is ready - without relying on Firebase Auth
    */
   async ensureAuth() {
-    if (!firebase.auth().currentUser) {
-      return new Promise((resolve) => {
-        const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-          if (user) {
-            unsubscribe();
-            resolve();
-          }
-        });
-        
-        // Set a timeout in case auth takes too long
-        setTimeout(() => {
-          unsubscribe();
-          resolve();
-        }, 5000);
-      });
+    // Check if we have auth info in sessionStorage
+    const authInfo = JSON.parse(sessionStorage.getItem('authInfo'));
+    
+    if (authInfo && authInfo.token) {
+      // We have authentication info, proceed
+      return Promise.resolve();
     }
-    return Promise.resolve();
+    
+    // For admin operations that require authentication
+    return Promise.reject(new Error('Authentication required'));
   }
 };
+
+// Explicitly attach to window object for global access
+window.UsersService = UsersService;

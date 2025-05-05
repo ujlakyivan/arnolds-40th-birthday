@@ -6,12 +6,6 @@ class Auth {
         this.currentUser = null;
         this.apiBaseUrl = 'http://localhost:3000/api'; // API base URL - change in production
         
-        // Fallback credentials for offline mode
-        this.credentials = {
-            'muradin': { password: 'gfy', role: 'user' },
-            'admin': { password: 'admin40', role: 'admin' }
-        };
-        
         // Cache DOM elements
         this.elements = {
             loginButton: document.getElementById('login-button'),
@@ -51,23 +45,26 @@ class Auth {
         }
         
         try {
-            // Try Firebase authentication first
+            // Authenticate against Firestore only
             const response = await UsersService.authenticateUser(username, password);
             
             if (response.success) {
+                // Store auth info in sessionStorage (persists across page refreshes but not tabs)
+                const authInfo = {
+                    token: response.token,
+                    username: response.user.username,
+                    role: response.user.role,
+                    userId: response.user.id,
+                    timestamp: new Date().getTime()
+                };
+                
+                // Use sessionStorage instead of localStorage
+                sessionStorage.setItem('authInfo', JSON.stringify(authInfo));
+                
                 this.authToken = response.token;
                 this.isAuthenticated = true;
                 this.isAdmin = response.user.role === 'admin';
                 this.currentUser = username;
-                
-                // Store auth info
-                const authInfo = {
-                    token: this.authToken,
-                    role: response.user.role,
-                    username: username
-                };
-                
-                StorageUtils.saveToStorage('authInfo', authInfo);
                 
                 this.showGamesContainer();
                 this.clearError();
@@ -80,18 +77,12 @@ class Auth {
                 UIUtils.showNotification(`Welcome back, ${username}!`, 'success');
                 return;
             }
-        } catch (error) {
-            console.log('Firebase auth failed, trying client-side fallback:', error);
             
-            // If Firebase auth fails, try client-side fallback
-            const userInfo = this.credentials[username];
-            if (userInfo && userInfo.password === password) {
-                this.authenticateUser(username, password, userInfo.role);
-                return;
-            }
+            this.showError('Invalid username or password');
+        } catch (error) {
+            console.error('Authentication error:', error);
+            this.showError('Authentication error. Please try again.');
         }
-        
-        this.showError('Invalid username or password');
     }
     
     async serverLogin(username, password) {
@@ -115,18 +106,6 @@ class Auth {
         this.isAuthenticated = true;
         this.isAdmin = role === 'admin';
         this.currentUser = username;
-        
-        // Store auth info with role for offline mode
-        const authInfo = {
-            token: btoa(`${username}:${password}`),
-            role: role,
-            username: username
-        };
-        
-        this.authToken = authInfo.token;
-        
-        // Use StorageUtils instead of direct localStorage calls
-        StorageUtils.saveToStorage('authInfo', authInfo);
         
         this.showGamesContainer();
         this.clearError();
@@ -885,8 +864,8 @@ class Auth {
         this.isAdmin = false;
         this.currentUser = null;
         
-        // Use StorageUtils to remove data
-        StorageUtils.removeFromStorage('authInfo');
+        // Clear sessionStorage
+        sessionStorage.removeItem('authInfo');
         
         this.showAuthContainer();
         
@@ -895,15 +874,23 @@ class Auth {
     }
     
     checkAuthStatus() {
-        // Use StorageUtils to get data
-        const authInfo = StorageUtils.getFromStorage('authInfo', null);
-        if (authInfo) {
-            this.authToken = authInfo.token;
+        // Check sessionStorage for auth info
+        const authInfo = JSON.parse(sessionStorage.getItem('authInfo'));
+        
+        if (authInfo && authInfo.token) {
             this.isAuthenticated = true;
+            this.authToken = authInfo.token;
             this.isAdmin = authInfo.role === 'admin';
             this.currentUser = authInfo.username;
+            
             this.showGamesContainer();
             this.updateUIForRole();
+        } else {
+            this.isAuthenticated = false;
+            this.authToken = null;
+            this.isAdmin = false;
+            this.currentUser = null;
+            this.showAuthContainer();
         }
     }
     

@@ -59,7 +59,7 @@ const UIUtils = {
             notification.style.transform = 'translateY(-20px)';
             
             setTimeout(() => {
-                document.body.removeChild(notification);
+                notification.remove(); // Use .remove() instead of removeChild
             }, 300);
         }, duration);
     },
@@ -205,15 +205,27 @@ const GameCompletionUtils = {
      * Gets the current user's completion status for all games
      * @returns {Object} Object with game IDs as keys and completion status as values
      */
-    getCompletedGames: function() {
+    getCompletedGames: async function() {
         const authInfo = StorageUtils.getFromStorage('authInfo', null);
         if (!authInfo || !authInfo.username) {
             return {}; // No user logged in
         }
         
-        // Get completion data for the current user
-        const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
-        return allCompletionData[authInfo.username] || {};
+        // Use Firebase GameCompletionService if available
+        if (window.GameCompletionService && typeof window.GameCompletionService.getUserCompletions === 'function') {
+            try {
+                return await window.GameCompletionService.getUserCompletions(authInfo.username);
+            } catch (err) {
+                console.error('Error getting completions from Firebase:', err);
+                // Fall back to local storage only if Firebase fails
+                const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
+                return allCompletionData[authInfo.username] || {};
+            }
+        } else {
+            // Fall back to local storage if Firebase service not available
+            const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
+            return allCompletionData[authInfo.username] || {};
+        }
     },
     
     /**
@@ -228,7 +240,16 @@ const GameCompletionUtils = {
             return false; // No user logged in
         }
         
-        // Get all completion data
+        // Use Firebase if available
+        if (window.GameCompletionService && typeof window.GameCompletionService.markGameCompleted === 'function' && completed) {
+            // For Firebase, we'll handle this asynchronously
+            window.GameCompletionService.markGameCompleted(authInfo.username, gameId)
+                .catch(err => {
+                    console.error('Error marking game completed in Firebase:', err);
+                });
+        }
+        
+        // Always update local storage for backwards compatibility
         const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
         
         // Get user's completion data or create if not exists
@@ -254,11 +275,42 @@ const GameCompletionUtils = {
             return false; // No user logged in
         }
         
-        // Get completion data for the current user specifically
+        // Get initial completion status from local storage
         const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
-        const userCompletions = allCompletionData[authInfo.username] || {};
+        const localCompletion = allCompletionData[authInfo.username] && allCompletionData[authInfo.username][gameId];
         
-        return !!userCompletions[gameId];
+        // If Firebase service is available, check there and update local storage
+        if (window.GameCompletionService && typeof window.GameCompletionService.getUserCompletions === 'function') {
+            // Get completion status from Firebase
+            window.GameCompletionService.getUserCompletions(authInfo.username)
+                .then(completions => {
+                    const firebaseIsCompleted = !!completions[gameId];
+                    
+                    // If Firebase and local storage disagree, update local storage to match Firebase
+                    if (firebaseIsCompleted !== !!localCompletion) {
+                        console.log(`Game ${gameId} completion status: Firebase=${firebaseIsCompleted}, Local=${!!localCompletion}. Updating local storage.`);
+                        
+                        // Update local storage with Firebase data (the source of truth)
+                        if (!allCompletionData[authInfo.username]) {
+                            allCompletionData[authInfo.username] = {};
+                        }
+                        allCompletionData[authInfo.username][gameId] = firebaseIsCompleted;
+                        StorageUtils.saveToStorage('gameCompletions', allCompletionData);
+                        
+                        // Refresh the UI
+                        if (window.gamesInstance && typeof window.gamesInstance.refreshGameTiles === 'function') {
+                            console.log('Refreshing game tiles after completion status update');
+                            window.gamesInstance.refreshGameTiles();
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error('Error checking game completion status:', err);
+                });
+        }
+        
+        // Return local completion status (will be updated asynchronously if needed)
+        return !!localCompletion;
     },
     
     /**
@@ -267,8 +319,16 @@ const GameCompletionUtils = {
      * @returns {boolean} Whether all games are completed
      */
     areAllGamesCompleted: function(gameIds) {
-        const completedGames = this.getCompletedGames();
-        return gameIds.every(id => !!completedGames[id]);
+        // This uses the local storage data initially, but will be updated
+        // when Firebase data is retrieved via isGameCompleted
+        const completedGames = {};
+        
+        // Check each game individually to trigger Firebase checks
+        gameIds.forEach(id => {
+            completedGames[id] = this.isGameCompleted(id);
+        });
+        
+        return gameIds.every(id => completedGames[id]);
     },
     
     /**
@@ -298,12 +358,21 @@ const GameCompletionUtils = {
      * @returns {boolean} Success status
      */
     resetGameCompletion: function(username, gameId) {
-        // Get all completion data
+        // Use Firebase if available
+        if (window.GameCompletionService && typeof window.GameCompletionService.resetGameCompletion === 'function') {
+            // Reset in Firebase (async)
+            window.GameCompletionService.resetGameCompletion(username, gameId)
+                .catch(err => {
+                    console.error('Error resetting game completion in Firebase:', err);
+                });
+        }
+        
+        // Always update local storage as well
         const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
         
         // Check if user exists in the data
         if (!allCompletionData[username]) {
-            return false; // User not found
+            return true; // User not found, but we've tried Firebase so return true
         }
         
         // Remove the game from completion data
@@ -314,7 +383,7 @@ const GameCompletionUtils = {
             return StorageUtils.saveToStorage('gameCompletions', allCompletionData);
         }
         
-        return false; // Game not found for user
+        return true; // The game may have been reset in Firebase even if not in local storage
     },
     
     /**
@@ -323,12 +392,21 @@ const GameCompletionUtils = {
      * @returns {boolean} Success status
      */
     resetAllGameCompletions: function(username) {
-        // Get all completion data
+        // Use Firebase if available
+        if (window.GameCompletionService && typeof window.GameCompletionService.resetAllCompletions === 'function') {
+            // Reset in Firebase (async)
+            window.GameCompletionService.resetAllCompletions(username)
+                .catch(err => {
+                    console.error('Error resetting all game completions in Firebase:', err);
+                });
+        }
+        
+        // Always update local storage as well
         const allCompletionData = StorageUtils.getFromStorage('gameCompletions', {});
         
         // Check if user exists in the data
         if (!allCompletionData[username]) {
-            return false; // User not found
+            return true; // User not found, but we've tried Firebase so return true
         }
         
         // Reset the user's completion data

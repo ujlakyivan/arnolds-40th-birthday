@@ -485,4 +485,75 @@ class Games {
             }, i * 50); // Stagger the creation for a continuous effect
         }
     }
+
+    /**
+     * Refreshes the game tiles to reflect updated completion status
+     * This method is called when completion status changes in Firebase
+     */
+    refreshGameTiles() {
+        // Only refresh if we have a games container
+        if (!this.elements.gamesContainer) return;
+        
+        // Get all game tile elements
+        const gameTiles = this.elements.gamesContainer.querySelectorAll('.game-tile');
+        
+        // Update each game tile
+        gameTiles.forEach(tile => {
+            const gameId = parseInt(tile.dataset.gameId);
+            
+            // Skip tiles without a game ID
+            if (isNaN(gameId)) return;
+            
+            // Check completion status
+            const isCompleted = window.GameCompletionUtils && GameCompletionUtils.isGameCompleted(gameId);
+            
+            // Update the completion status UI
+            if (isCompleted) {
+                // Add completed class if not already present
+                if (!tile.classList.contains('completed-game')) {
+                    tile.classList.add('completed-game');
+                    
+                    // Create and add completion badge if it doesn't exist
+                    if (!tile.querySelector('.completion-badge')) {
+                        const completionBadge = document.createElement('div');
+                        completionBadge.className = 'completion-badge';
+                        completionBadge.innerHTML = '✓';
+                        completionBadge.title = 'Completed!';
+                        
+                        // Style the badge
+                        completionBadge.style.position = 'absolute';
+                        completionBadge.style.top = '-10px';
+                        completionBadge.style.right = '-10px';
+                        completionBadge.style.backgroundColor = '#2ecc71';
+                        completionBadge.style.color = 'white';
+                        completionBadge.style.borderRadius = '50%';
+                        completionBadge.style.width = '30px';
+                        completionBadge.style.height = '30px';
+                        completionBadge.style.display = 'flex';
+                        completionBadge.style.justifyContent = 'center';
+                        completionBadge.style.alignItems = 'center';
+                        completionBadge.style.fontSize = '16px';
+                        completionBadge.style.fontWeight = 'bold';
+                        completionBadge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                        
+                        // Ensure tile has relative positioning for badge placement
+                        tile.style.position = 'relative';
+                        
+                        // Add badge to game tile
+                        tile.appendChild(completionBadge);
+                    }
+                }
+            } else {
+                // Remove completed class and badge if present
+                tile.classList.remove('completed-game');
+                const badge = tile.querySelector('.completion-badge');
+                if (badge) {
+                    badge.remove();
+                }
+            }
+        });
+        
+        // Check if all games are completed and show winning message if so
+        this.checkAllGamesCompleted();
+    }
 }
