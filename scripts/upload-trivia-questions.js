@@ -42,7 +42,7 @@ if (!fs.existsSync(serviceAccountPath)) {
 }
 
 // Path to the questions JSON file
-const questionsFilePath = path.join(__dirname, '../games/trivia/questions.json');
+const questionsFilePath = path.join(__dirname, '../games/wow/questions.json');
 
 // Initialize Firebase Admin SDK
 try {

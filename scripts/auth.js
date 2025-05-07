@@ -718,12 +718,6 @@ class Auth {
                                 <label for="time-limit">Time Limit per Question (seconds):</label>
                                 <input type="number" id="time-limit" min="5" max="60" value="${settings.timeLimit || 15}">
                             </div>
-                            <div class="form-group checkbox">
-                                <label for="enable-confetti">
-                                    <input type="checkbox" id="enable-confetti" ${settings.enableConfetti ? 'checked' : ''}>
-                                    Enable Confetti Effects
-                                </label>
-                            </div>
                         </div>
                         
                         <div class="settings-section">
@@ -808,7 +802,6 @@ class Auth {
                     const newSettings = {
                         questionsToUse: parseInt(document.getElementById('questions-to-use').value, 10),
                         timeLimit: parseInt(document.getElementById('time-limit').value, 10),
-                        enableConfetti: document.getElementById('enable-confetti').checked,
                         completionThreshold: parseInt(document.getElementById('completion-threshold').value, 10),
                         updatedAt: new Date().toISOString()
                     };
@@ -839,7 +832,6 @@ class Auth {
                         const defaultSettings = SettingsService.getDefaultSettings();
                         document.getElementById('questions-to-use').value = defaultSettings.questionsToUse;
                         document.getElementById('time-limit').value = defaultSettings.timeLimit;
-                        document.getElementById('enable-confetti').checked = defaultSettings.enableConfetti;
                         document.getElementById('completion-threshold').value = defaultSettings.completionThreshold || 90;
                         
                         UIUtils.showNotification('Settings reset to defaults', 'info');

@@ -64,17 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {Promise<Object>} - Promise resolving to settings object
      */
     async function loadSettings() {
+        console.log('Attempting to load settings from Firebase...');
         try {
+            // Check if SettingsService is available
             if (window.SettingsService && typeof window.SettingsService.getSettings === 'function') {
+                console.log('SettingsService available, loading settings from Firebase...');
                 const settings = await window.SettingsService.getSettings();
-                if (settings && settings.games && settings.games.overwatch) {
-                    return settings.games.overwatch;
-                }
+                console.log('Loaded settings from Firebase:', settings);
+                return settings;
+            } else {
+                throw new Error('SettingsService not available');
             }
-            return {}; // Return empty object if no settings found
         } catch (error) {
-            console.error('Error loading settings:', error);
-            return {}; // Return empty object on error
+            console.error('Firebase settings unavailable:', error);
+            alert('Failed to load game settings from the database. Please try again later.');
+            throw error; // Re-throw error instead of providing fallback settings
         }
     }
 
@@ -305,44 +309,34 @@ document.addEventListener('DOMContentLoaded', () => {
         // Mark game as completed if score is equal to or higher than completion threshold
         if (scorePercentage >= gameState.completionThreshold) {
             if (window.GameCompletionService && typeof window.GameCompletionService.markGameCompleted === 'function') {
-                // Using GameCompletionService for Firestore instead of GameCompletionUtils
+                // Using GameCompletionService for Firestore
                 const authInfo = window.StorageUtils ? window.StorageUtils.getFromStorage('authInfo', null) : null;
                 if (authInfo && authInfo.username) {
                     window.GameCompletionService.markGameCompleted(authInfo.username, gameState.gameId)
                         .then(success => {
-                            console.log('Game completion mark attempt with Firestore:', success);
+                            console.log('Game completion marked with Firestore:', success);
+                            // Add completion message to the result
+                            message += ' 🏆 You\'ve completed this game!';
+                            elements.resultMessage.textContent = message;
                         })
                         .catch(err => {
                             console.error('Error marking game as completed with Firestore:', err);
-                            // Fallback to old method if Firestore fails
-                            if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
-                                const success = window.GameCompletionUtils.markGameCompleted(gameState.gameId);
-                                console.log('Fallback game completion mark attempt:', success);
-                            }
+                            alert('Could not save your game completion. Please try again later.');
+                            elements.resultMessage.textContent = message;
                         });
                 } else {
-                    // Fallback to old method if no auth info
-                    if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
-                        const success = window.GameCompletionUtils.markGameCompleted(gameState.gameId);
-                        console.log('Fallback game completion mark attempt:', success);
-                    }
+                    console.error('No authentication info available for game completion');
+                    alert('You need to be logged in to save your progress.');
+                    elements.resultMessage.textContent = message;
                 }
-                
-                // Add completion message to the result
-                message += ' 🏆 You\'ve completed this game!';
-            } else if (window.GameCompletionUtils && typeof window.GameCompletionUtils.markGameCompleted === 'function') {
-                // Fallback to old GameCompletionUtils if GameCompletionService not available
-                const success = window.GameCompletionUtils.markGameCompleted(gameState.gameId);
-                console.log('Game completion mark attempt with legacy method:', success);
-                
-                // Add completion message to the result
-                message += ' 🏆 You\'ve completed this game!';
             } else {
-                console.error('Neither GameCompletionService nor GameCompletionUtils available');
+                console.error('GameCompletionService not available');
+                alert('Game completion service is not available. Please try again later.');
+                elements.resultMessage.textContent = message;
             }
+        } else {
+            elements.resultMessage.textContent = message;
         }
-        
-        elements.resultMessage.textContent = message;
     }
 
     /**

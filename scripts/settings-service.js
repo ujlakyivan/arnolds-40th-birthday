@@ -60,7 +60,6 @@ const SettingsService = {
     const defaultSettings = {
       questionsToUse: 20,
       timeLimit: 15,
-      enableConfetti: true,
       completionThreshold: 90,
       createdAt: new Date().toISOString()
     };

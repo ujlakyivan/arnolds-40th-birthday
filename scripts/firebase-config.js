@@ -24,7 +24,7 @@ function initializeAppCheck() {
         appCheck.activate(
             new firebase.appCheck.ReCaptchaV3Provider('6LeOETErAAAAALMzex88HulhRAkWGBBg_2IAJzLb'),
             // Set to false for production
-            true  // Debug mode
+            false  // Debug mode
         );
         console.log('Firebase App Check initialized successfully');
     } catch (error) {
