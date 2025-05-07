@@ -1,9 +1,10 @@
 server/node_modules/
 server/.env
-server/firebase-adminsdk.json
+server/firebase-admin-key.json
 server/package-lock.json
 scripts/upload-diablo-questions.js
 scripts/upload-overwatch-questions.js
 scripts/upload-trivia-questions.js
 .env
 .DS_Store
+node_modules
