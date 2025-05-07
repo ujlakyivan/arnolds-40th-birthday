@@ -12,26 +12,34 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Initialize Firebase App Check for added security
-// You'll need to register a reCAPTCHA v3 site key in the Google Cloud Console
-// and add it to your Firebase console
-try {
-    const appCheck = firebase.appCheck();
-    // Replace 'YOUR_RECAPTCHA_SITE_KEY' with the actual site key you'll get from Google reCAPTCHA
-    appCheck.activate(
-        new firebase.appCheck.ReCaptchaV3Provider('6LeOETErAAAAALMzex88HulhRAkWGBBg_2IAJzLb'),
-        // Set to true for development, false for production
-        false  // Debug mode - remove or set to false when deploying to production
-    );
-    console.log('Firebase App Check initialized');
-} catch (error) {
-    console.error('Error initializing Firebase App Check:', error);
-}
-
-// Initialize Firestore
+// Initialize Firestore first (doesn't depend on DOM)
 const db = firebase.firestore();
 
-// For anonymous Firestore access - enables reading without authentication
-// This depends on your Firestore security rules being properly configured
-// to allow unauthenticated reads to necessary collections
+// Initialize Firebase App Check only after DOM is ready
+// This prevents the "Cannot read properties of null (reading 'appendChild')" error
+function initializeAppCheck() {
+    try {
+        // Using Firebase v9.22.0 compatibility mode App Check initialization
+        const appCheck = firebase.appCheck();
+        appCheck.activate(
+            new firebase.appCheck.ReCaptchaV3Provider('6LeOETErAAAAALMzex88HulhRAkWGBBg_2IAJzLb'),
+            // Set to false for production
+            true  // Debug mode
+        );
+        console.log('Firebase App Check initialized successfully');
+    } catch (error) {
+        console.error('Error initializing Firebase App Check:', error);
+        console.warn('Proceeding without App Check. Some features may not be secure.');
+    }
+}
+
+// Wait for DOM to be fully loaded before initializing App Check
+if (document.readyState === 'complete') {
+    // DOM already loaded, initialize now
+    initializeAppCheck();
+} else {
+    // Wait for DOM to load
+    window.addEventListener('load', initializeAppCheck);
+}
+
 console.log('Firebase and Firestore initialized');

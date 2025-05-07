@@ -115,22 +115,58 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Load questions from JSON file
+     * Load questions from Firestore
      * @returns {Promise<Array>} - Promise resolving to array of questions
      */
     async function loadQuestions() {
         try {
-            // Use the correct path that accounts for the base href
-            const response = await fetch('games/trivia/questions.json');
-            if (!response.ok) {
-                throw new Error('Failed to load questions');
+            // Check if Firebase is initialized and available
+            if (firebase && firebase.firestore) {
+                console.log('Loading trivia questions from Firebase Firestore...');
+                const db = firebase.firestore();
+                const triviaCollection = db.collection('triviaQuestions');
+                
+                // Get all questions from the Firestore collection
+                const snapshot = await triviaCollection.orderBy('index').get();
+                
+                if (snapshot.empty) {
+                    console.warn('No questions found in Firestore!');
+                    throw new Error('No questions found in Firestore');
+                }
+                
+                // Map Firestore documents to question objects
+                const questions = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        question: data.question,
+                        options: data.options,
+                        answer: data.answer
+                    };
+                });
+                
+                console.log(`Loaded ${questions.length} questions from Firestore`);
+                return questions;
+            } else {
+                throw new Error('Firebase is not initialized');
             }
-            const data = await response.json();
-            return data.questions || [];
         } catch (error) {
-            console.error('Error loading questions:', error);
-            // Return empty array if there's an error
-            return [];
+            console.error('Error loading questions from Firestore:', error);
+            
+            // Fallback to local JSON if Firebase fails
+            console.log('Falling back to local questions.json file');
+            try {
+                // Use the correct path that accounts for the base href
+                const response = await fetch('games/trivia/questions.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load questions');
+                }
+                const data = await response.json();
+                return data.questions || [];
+            } catch (localError) {
+                console.error('Error loading local questions:', localError);
+                // Return empty array if there's an error
+                return [];
+            }
         }
     }
 
@@ -153,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.timeLimit = settings.timeLimit || gameState.timeLimit;
             gameState.completionThreshold = settings.completionThreshold || gameState.completionThreshold;
             
-            // Load questions from JSON file
+            // Load questions from Firestore
             const allQuestions = await loadQuestions();
             
             if (allQuestions.length === 0) {

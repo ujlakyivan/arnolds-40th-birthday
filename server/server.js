@@ -5,10 +5,9 @@
  * To implement this server:
  * 1. Install Node.js
  * 2. Run `npm init` in this directory
- * 3. Install required dependencies: express, cors, jsonwebtoken, bcrypt, mongodb, dotenv
- *    (`npm install express cors jsonwebtoken bcrypt mongodb dotenv`)
- * 4. Create a .env file with your MongoDB connection string
- * 5. Run the server with `node server.js`
+ * 3. Install required dependencies: express, cors, jsonwebtoken, bcrypt, dotenv
+ *    (`npm install express cors jsonwebtoken bcrypt dotenv`)
+ * 4. Run the server with `node server.js`
  */
 
 // Load environment variables from .env file
@@ -20,48 +19,27 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'arnold-40th-birthday-secret'; // Change in production!
 const SALT_ROUNDS = 10;
 
-// MongoDB configuration
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/birthday-app';
-let db;
+// Settings database path
+const SETTINGS_DB_PATH = path.join(__dirname, 'settings.json');
 
-// Connect to MongoDB
-async function connectToMongo() {
-    try {
-        const client = new MongoClient(MONGO_URI);
-        await client.connect();
-        db = client.db('birthday-app');
-        console.log('Connected to MongoDB');
-        
-        // Create indexes if needed
-        await db.collection('settings').createIndex({ type: 1 }, { unique: true });
-        
-        // Initialize settings if they don't exist
-        const settings = await db.collection('settings').findOne({ type: 'global' });
-        if (!settings) {
-            const defaultSettings = {
-                type: 'global',
-                questionsToUse: 20,
-                timeLimit: 15,
-                enableConfetti: true
-            };
-            await db.collection('settings').insertOne(defaultSettings);
-            console.log('Default settings initialized in MongoDB');
-        }
-    } catch (err) {
-        console.error('Failed to connect to MongoDB:', err);
-        // We'll fall back to local file if MongoDB connection fails
+// Initialize settings if they don't exist
+function initSettingsDb() {
+    if (!fs.existsSync(SETTINGS_DB_PATH)) {
+        const defaultSettings = {
+            questionsToUse: 20,
+            timeLimit: 15,
+            enableConfetti: true
+        };
+        fs.writeFileSync(SETTINGS_DB_PATH, JSON.stringify(defaultSettings, null, 2));
+        console.log('Default settings initialized');
     }
 }
-
-// Call this when starting the app
-connectToMongo().catch(console.error);
 
 // User database - in a real app, use a proper database
 const USER_DB_PATH = path.join(__dirname, 'users.json');
@@ -122,6 +100,7 @@ function saveUsers(users) {
 }
 
 // Initialize database on startup
+initSettingsDb();
 initUserDb();
 
 // Middleware
@@ -393,37 +372,41 @@ app.post('/api/change-password', verifyUser, async (req, res) => {
 
 // Game settings endpoints
 
-// Get game settings
-app.get('/api/settings', verifyUser, async (req, res) => {
+// Load settings from file
+function loadSettings() {
     try {
-        // Try to get settings from MongoDB first if available
-        if (db) {
-            const settings = await db.collection('settings').findOne({ type: 'global' });
-            if (settings) {
-                // Remove MongoDB _id field before sending to client
-                const { _id, ...cleanSettings } = settings;
-                return res.json({ success: true, settings: cleanSettings });
-            }
+        if (fs.existsSync(SETTINGS_DB_PATH)) {
+            const data = fs.readFileSync(SETTINGS_DB_PATH, 'utf8');
+            return JSON.parse(data);
         }
-        
-        // Fall back to file system if MongoDB is not available or settings not found
-        const settingsPath = path.join(__dirname, 'settings.json');
-        
-        if (fs.existsSync(settingsPath)) {
-            const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-            res.json({ success: true, settings });
-        } else {
-            // Return default settings
-            const defaultSettings = {
-                questionsToUse: 20,
-                timeLimit: 15,
-                enableConfetti: true
-            };
-            
-            // Save default settings to file
-            fs.writeFileSync(settingsPath, JSON.stringify(defaultSettings, null, 2));
-            res.json({ success: true, settings: defaultSettings });
-        }
+    } catch (err) {
+        console.error('Error loading settings:', err);
+    }
+    
+    // Return default settings if file doesn't exist or can't be read
+    return {
+        questionsToUse: 20,
+        timeLimit: 15,
+        enableConfetti: true
+    };
+}
+
+// Save settings to file
+function saveSettings(settings) {
+    try {
+        fs.writeFileSync(SETTINGS_DB_PATH, JSON.stringify(settings, null, 2));
+        return true;
+    } catch (err) {
+        console.error('Error saving settings:', err);
+        return false;
+    }
+}
+
+// Get game settings
+app.get('/api/settings', verifyUser, (req, res) => {
+    try {
+        const settings = loadSettings();
+        res.json({ success: true, settings });
     } catch (err) {
         console.error('Error getting settings:', err);
         res.status(500).json({ success: false, message: 'Error getting settings' });
@@ -431,7 +414,7 @@ app.get('/api/settings', verifyUser, async (req, res) => {
 });
 
 // Update game settings (admin only)
-app.put('/api/settings', verifyAdmin, async (req, res) => {
+app.put('/api/settings', verifyAdmin, (req, res) => {
     const { settings } = req.body;
     
     if (!settings) {
@@ -439,24 +422,12 @@ app.put('/api/settings', verifyAdmin, async (req, res) => {
     }
     
     try {
-        // Save to MongoDB if available
-        if (db) {
-            // Make sure type field is set
-            settings.type = 'global';
-            
-            // Update settings in MongoDB
-            await db.collection('settings').updateOne(
-                { type: 'global' },
-                { $set: settings },
-                { upsert: true }
-            );
+        // Save to local file
+        if (saveSettings(settings)) {
+            res.json({ success: true, settings });
+        } else {
+            throw new Error('Failed to save settings');
         }
-        
-        // Also save to local file as backup
-        const settingsPath = path.join(__dirname, 'settings.json');
-        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
-        
-        res.json({ success: true, settings });
     } catch (err) {
         console.error('Error updating settings:', err);
         res.status(500).json({ success: false, message: 'Error updating settings' });
