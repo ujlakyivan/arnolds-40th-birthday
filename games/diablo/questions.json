@@ -1,0 +1,519 @@
+{
+  "questions": [
+    {
+      "question": "Who is the main antagonist of Diablo I?",
+      "options": ["Baal", "Mephisto", "Diablo", "Andariel"],
+      "answer": "Diablo"
+    },
+    {
+      "question": "What is the name of the town in Diablo I?",
+      "options": ["Lut Gholein", "Kurast", "Tristram", "Harrogath"],
+      "answer": "Tristram"
+    },
+    {
+      "question": "Which class from Diablo II uses a Paladin Shield?",
+      "options": ["Amazon", "Barbarian", "Paladin", "Sorceress"],
+      "answer": "Paladin"
+    },
+    {
+      "question": "What are the names of the three Prime Evils?",
+      "options": ["Diablo, Mephisto, and Baal", "Andariel, Duriel, and Belial", "Azmodan, Belial, and Diablo", "Mephisto, Belial, and Andariel"],
+      "answer": "Diablo, Mephisto, and Baal"
+    },
+    {
+      "question": "Which one is NOT a playable class in Diablo II?",
+      "options": ["Assassin", "Druid", "Monk", "Necromancer"],
+      "answer": "Monk"
+    },
+    {
+      "question": "What item is needed to identify magical items in Diablo?",
+      "options": ["Scroll of Identify", "Horadric Cube", "Book of Identify", "Identifying Crystal"],
+      "answer": "Scroll of Identify"
+    },
+    {
+      "question": "What is the final Act in Diablo II: Lord of Destruction?",
+      "options": ["Act IV", "Act V", "Act VI", "Act VII"],
+      "answer": "Act V"
+    },
+    {
+      "question": "Who is the final boss in Act IV of Diablo II?",
+      "options": ["Andariel", "Mephisto", "Diablo", "Baal"],
+      "answer": "Diablo"
+    },
+    {
+      "question": "Which of these is NOT a Lesser Evil?",
+      "options": ["Andariel", "Duriel", "Belial", "Baal"],
+      "answer": "Baal"
+    },
+    {
+      "question": "What is the rarest type of item quality in Diablo II?",
+      "options": ["Rare", "Set", "Unique", "Crafted"],
+      "answer": "Unique"
+    },
+    {
+      "question": "Who is the Lord of Destruction in Diablo II's expansion?",
+      "options": ["Mephisto", "Diablo", "Baal", "Belial"],
+      "answer": "Baal"
+    },
+    {
+      "question": "What is the name of the Archangel who helps the player in Diablo III?",
+      "options": ["Tyrael", "Itherael", "Auriel", "Imperius"],
+      "answer": "Tyrael"
+    },
+    {
+      "question": "What is the name of the magical cube used for transmuting items in Diablo II?",
+      "options": ["Kanai's Cube", "Alchemist's Cube", "Horadric Cube", "Transmutation Cube"],
+      "answer": "Horadric Cube"
+    },
+    {
+      "question": "Which character is known as the 'Lord of Terror'?",
+      "options": ["Mephisto", "Baal", "Duriel", "Diablo"],
+      "answer": "Diablo"
+    },
+    {
+      "question": "What is the name of the world where Diablo takes place?",
+      "options": ["Azeroth", "Sanctuary", "Pandemonium", "Torment"],
+      "answer": "Sanctuary"
+    },
+    {
+      "question": "Which act in Diablo II features the desert city of Lut Gholein?",
+      "options": ["Act I", "Act II", "Act III", "Act IV"],
+      "answer": "Act II"
+    },
+    {
+      "question": "What was the name of the archangel who stole the Worldstone?",
+      "options": ["Tyrael", "Inarius", "Imperius", "Itherael"],
+      "answer": "Inarius"
+    },
+    {
+      "question": "Which class was newly introduced in Diablo III?",
+      "options": ["Barbarian", "Wizard", "Witch Doctor", "Paladin"],
+      "answer": "Witch Doctor"
+    },
+    {
+      "question": "What is the name of Deckard Cain's niece in Diablo III?",
+      "options": ["Adria", "Leah", "Maghda", "Gillian"],
+      "answer": "Leah"
+    },
+    {
+      "question": "What is the signature phrase of Deckard Cain?",
+      "options": ["Stay awhile and listen", "The end is near", "By the light", "Knowledge is power"],
+      "answer": "Stay awhile and listen"
+    },
+    {
+      "question": "What is the name of the mountain where the Worldstone was kept?",
+      "options": ["Mount Arreat", "Mount Nymyr", "The Burning Hells", "The High Heavens"],
+      "answer": "Mount Arreat"
+    },
+    {
+      "question": "Which of these is NOT a playable class in the base version of Diablo III?",
+      "options": ["Monk", "Barbarian", "Crusader", "Wizard"],
+      "answer": "Crusader"
+    },
+    {
+      "question": "Who was responsible for the fall of Tristram between Diablo I and Diablo II?",
+      "options": ["The Skeleton King", "Archbishop Lazarus", "The Dark Wanderer", "Adria"],
+      "answer": "The Dark Wanderer"
+    },
+    {
+      "question": "What did Tyrael destroy at the end of Diablo II: Lord of Destruction?",
+      "options": ["The Worldstone", "The Soulstone", "Mount Arreat", "The Black Soulstone"],
+      "answer": "The Worldstone"
+    },
+    {
+      "question": "What is the armor slot that gives the most base defense in Diablo II?",
+      "options": ["Helmet", "Armor", "Shield", "Boots"],
+      "answer": "Armor"
+    },
+    {
+      "question": "Which character is known as the 'Lord of Hatred'?",
+      "options": ["Diablo", "Baal", "Mephisto", "Duriel"],
+      "answer": "Mephisto"
+    },
+    {
+      "question": "What is the highest difficulty level in the original Diablo II?",
+      "options": ["Normal", "Nightmare", "Hell", "Torment"],
+      "answer": "Hell"
+    },
+    {
+      "question": "Which Prime Evil was trapped in Tal Rasha?",
+      "options": ["Diablo", "Baal", "Mephisto", "Andariel"],
+      "answer": "Baal"
+    },
+    {
+      "question": "What is the name of the city in Act III of Diablo II?",
+      "options": ["Lut Gholein", "Kurast", "Tristram", "Harrogath"],
+      "answer": "Kurast"
+    },
+    {
+      "question": "What is the name of the angel who became mortal in Diablo III?",
+      "options": ["Imperius", "Auriel", "Tyrael", "Malthael"],
+      "answer": "Tyrael"
+    },
+    {
+      "question": "Which character is known as the 'Lord of Destruction'?",
+      "options": ["Diablo", "Mephisto", "Baal", "Azmodan"],
+      "answer": "Baal"
+    },
+    {
+      "question": "What are humans with demon and angel heritage called in Diablo?",
+      "options": ["Nephalem", "Half-breeds", "Cambions", "Nephilim"],
+      "answer": "Nephalem"
+    },
+    {
+      "question": "What is the name of the group of mage-clan that imprisoned the three Prime Evils?",
+      "options": ["The Vizjerei", "The Horadrim", "The Crusaders", "The Zakarum"],
+      "answer": "The Horadrim"
+    },
+    {
+      "question": "Where is the Burning Hells located in relation to Sanctuary?",
+      "options": ["Above", "Below", "To the East", "To the West"],
+      "answer": "Below"
+    },
+    {
+      "question": "What is the name of the demonic forge used to create the Black Soulstone?",
+      "options": ["The Hellforge", "The Black Anvil", "The Hellfire Forge", "The Burning Forge"],
+      "answer": "The Hellforge"
+    },
+    {
+      "question": "What year was the original Diablo game released?",
+      "options": ["1995", "1996", "1997", "1998"],
+      "answer": "1996"
+    },
+    {
+      "question": "Which of these is NOT one of the archangels of the Angiris Council?",
+      "options": ["Tyrael", "Imperius", "Inarius", "Auriel"],
+      "answer": "Inarius"
+    },
+    {
+      "question": "What is the color of the portal to Tristram in Diablo II?",
+      "options": ["Red", "Blue", "Gold", "Purple"],
+      "answer": "Red"
+    },
+    {
+      "question": "Which weapon type can only be used by the Amazon class in Diablo II?",
+      "options": ["Bows", "Javelins", "Spears", "Amazon Bows"],
+      "answer": "Amazon Bows"
+    },
+    {
+      "question": "What is the name of the expansion pack for the original Diablo?",
+      "options": ["Lord of Destruction", "Hellfire", "Reaper of Souls", "Rise of the Necromancer"],
+      "answer": "Hellfire"
+    },
+    {
+      "question": "Who is the final boss in Diablo III's base game?",
+      "options": ["Belial", "Azmodan", "Diablo", "Malthael"],
+      "answer": "Diablo"
+    },
+    {
+      "question": "What is the name of the leader of the rogues in Diablo I?",
+      "options": ["Akara", "Kashya", "Blood Raven", "Charsi"],
+      "answer": "Blood Raven"
+    },
+    {
+      "question": "Which class can summon skeletons in Diablo II?",
+      "options": ["Sorceress", "Barbarian", "Paladin", "Necromancer"],
+      "answer": "Necromancer"
+    },
+    {
+      "question": "What is the currency used in Diablo games?",
+      "options": ["Silver", "Copper", "Gold", "Platinum"],
+      "answer": "Gold"
+    },
+    {
+      "question": "What is the name of Tyrael's sword?",
+      "options": ["El'druin", "Azurewrath", "Solarion", "Malthael's Scythe"],
+      "answer": "El'druin"
+    },
+    {
+      "question": "Which class in Diablo III uses hatred and discipline as resources?",
+      "options": ["Barbarian", "Wizard", "Demon Hunter", "Monk"],
+      "answer": "Demon Hunter"
+    },
+    {
+      "question": "What was Adria's role in Diablo III?",
+      "options": ["Hero's mother", "Witch who betrayed humanity", "Archangel in disguise", "Diablo's general"],
+      "answer": "Witch who betrayed humanity"
+    },
+    {
+      "question": "What is the most powerful unique ring in Diablo II?",
+      "options": ["Stone of Jordan", "Bul-Kathos' Wedding Band", "The Oculus", "Nagelring"],
+      "answer": "Stone of Jordan"
+    },
+    {
+      "question": "Which event does the Darkening of Tristram celebrate?",
+      "options": ["Diablo III's launch", "Diablo II's anniversary", "Original Diablo's anniversary", "Diablo 4's announcement"],
+      "answer": "Original Diablo's anniversary"
+    },
+    {
+      "question": "What is the name of the angel of death in Diablo III: Reaper of Souls?",
+      "options": ["Tyrael", "Imperius", "Malthael", "Itherael"],
+      "answer": "Malthael"
+    },
+    {
+      "question": "Which class in Diablo III wields two-handed mighty weapons?",
+      "options": ["Monk", "Barbarian", "Crusader", "Wizard"],
+      "answer": "Barbarian"
+    },
+    {
+      "question": "What is the highest quality of gems in Diablo II?",
+      "options": ["Perfect", "Flawless", "Pristine", "Immaculate"],
+      "answer": "Perfect"
+    },
+    {
+      "question": "Which villain does the player face in the Reaper of Souls expansion?",
+      "options": ["Diablo", "Baal", "Belial", "Malthael"],
+      "answer": "Malthael"
+    },
+    {
+      "question": "What key item do you need to collect to access Uber Tristram in Diablo II?",
+      "options": ["Standard of Heroes", "Keys of Hate, Terror, and Destruction", "Black Soulstone", "Hellforge Hammer"],
+      "answer": "Keys of Hate, Terror, and Destruction"
+    },
+    {
+      "question": "Which class was added in Diablo III's Reaper of Souls expansion?",
+      "options": ["Witch Doctor", "Crusader", "Demon Hunter", "Necromancer"],
+      "answer": "Crusader"
+    },
+    {
+      "question": "What is the highest level Whimsyshire difficulty in Diablo III?",
+      "options": ["Whimsydale", "Super Happy Fun Land", "Not Even Death", "Whimsyshire Inferno"],
+      "answer": "Whimsydale"
+    },
+    {
+      "question": "What was the name of the first Horadrim?",
+      "options": ["Tal Rasha", "Zoltun Kulle", "Jered Cain", "Deckard Cain"],
+      "answer": "Jered Cain"
+    },
+    {
+      "question": "Which class was released as DLC after Reaper of Souls?",
+      "options": ["Druid", "Paladin", "Necromancer", "Assassin"],
+      "answer": "Necromancer"
+    },
+    {
+      "question": "What is the name of Diablo IV's main antagonist?",
+      "options": ["Lilith", "Mephisto", "Diablo", "Baal"],
+      "answer": "Lilith"
+    },
+    {
+      "question": "What special ability does the Sorceress have for movement in Diablo II?",
+      "options": ["Leap", "Teleport", "Dash", "Blink"],
+      "answer": "Teleport"
+    },
+    {
+      "question": "Which of these is NOT a playable class in Diablo IV?",
+      "options": ["Barbarian", "Druid", "Demon Hunter", "Necromancer"],
+      "answer": "Demon Hunter"
+    },
+    {
+      "question": "In Diablo lore, who is the mother of all nephalem?",
+      "options": ["Adria", "Lilith", "Auriel", "Leah"],
+      "answer": "Lilith"
+    },
+    {
+      "question": "Who is the daughter of Mephisto in Diablo lore?",
+      "options": ["Andariel", "Lilith", "Maghda", "Adria"],
+      "answer": "Lilith"
+    },
+    {
+      "question": "What was the name of the first Diablo III expansion?",
+      "options": ["Lord of Destruction", "Reaper of Souls", "Rise of the Necromancer", "Hellfire"],
+      "answer": "Reaper of Souls"
+    },
+    {
+      "question": "What is the name of the town in Act I of Diablo III?",
+      "options": ["New Tristram", "Caldeum", "Westmarch", "Lut Gholein"],
+      "answer": "New Tristram"
+    },
+    {
+      "question": "Which class in Diablo II has the 'Whirlwind' skill?",
+      "options": ["Paladin", "Barbarian", "Druid", "Assassin"],
+      "answer": "Barbarian"
+    },
+    {
+      "question": "What is the name of the demonic invasion in Diablo III?",
+      "options": ["The Dark Exile", "The Eternal Conflict", "The Burning Hells", "The Prime Evil"],
+      "answer": "The Burning Hells"
+    },
+    {
+      "question": "Which angel betrayed the High Heavens and sided with demons?",
+      "options": ["Tyrael", "Izual", "Imperius", "Auriel"],
+      "answer": "Izual"
+    },
+    {
+      "question": "What is the name of the magical item used to identify items in Diablo III?",
+      "options": ["Scroll of Identify", "Book of Cain", "Cube of Revealing", "None, items identify automatically"],
+      "answer": "None, items identify automatically"
+    },
+    {
+      "question": "Which character in Diablo lore created the Black Soulstone?",
+      "options": ["Adria", "Zoltun Kulle", "Mephisto", "Cain"],
+      "answer": "Zoltun Kulle"
+    },
+    {
+      "question": "What is the rarest item quality in Diablo III?",
+      "options": ["Legendary", "Set", "Ancient Legendary", "Primal Ancient"],
+      "answer": "Primal Ancient"
+    },
+    {
+      "question": "In which act of Diablo II do you battle Mephisto?",
+      "options": ["Act I", "Act II", "Act III", "Act IV"],
+      "answer": "Act III"
+    },
+    {
+      "question": "What is the name of the secret cow level in Diablo II?",
+      "options": ["Moo Moo Farm", "Secret Cow Level", "Bovine Sanctuary", "The Moo Fields"],
+      "answer": "Secret Cow Level"
+    },
+    {
+      "question": "Which of these is NOT one of the Lesser Evils?",
+      "options": ["Azmodan", "Duriel", "Belial", "Lilith"],
+      "answer": "Lilith"
+    },
+    {
+      "question": "What is the highest difficulty level in Diablo III?",
+      "options": ["Hell", "Inferno", "Torment XVI", "Nightmare"],
+      "answer": "Torment XVI"
+    },
+    {
+      "question": "Who was the first human to become a Nephalem in Diablo lore?",
+      "options": ["Uldyssian", "Rathma", "Mendeln", "Lilith"],
+      "answer": "Uldyssian"
+    },
+    {
+      "question": "What is the name of the cube in Diablo III that can transform legendary items?",
+      "options": ["Horadric Cube", "Kanai's Cube", "Zoltun's Cube", "Cain's Cube"],
+      "answer": "Kanai's Cube"
+    },
+    {
+      "question": "Which angel leads the Angiris Council?",
+      "options": ["Tyrael", "Imperius", "Malthael", "Auriel"],
+      "answer": "Imperius"
+    },
+    {
+      "question": "What is the main setting for Diablo IV?",
+      "options": ["Sanctuary", "The Burning Hells", "The High Heavens", "Pandemonium"],
+      "answer": "Sanctuary"
+    },
+    {
+      "question": "Which class from Diablo II returned in Diablo III's base game?",
+      "options": ["Amazon", "Necromancer", "Barbarian", "Paladin"],
+      "answer": "Barbarian"
+    },
+    {
+      "question": "What is the name of the magic finding system in Diablo III?",
+      "options": ["Magic Find", "Nephalem Rifts", "Greater Rifts", "Torment Levels"],
+      "answer": "Nephalem Rifts"
+    },
+    {
+      "question": "Which monster only appears during special Diablo III events?",
+      "options": ["Treasure Goblin", "Rainbow Unicorn", "Menagerist Goblin", "Cow King"],
+      "answer": "Menagerist Goblin"
+    },
+    {
+      "question": "What is the name of the endgame currency in Diablo III?",
+      "options": ["Blood Shards", "Greater Rift Keystones", "Death's Breath", "Forgotten Souls"],
+      "answer": "Greater Rift Keystones"
+    },
+    {
+      "question": "What is the ultimate weapon against demons according to Diablo lore?",
+      "options": ["El'druin", "Worldstone", "Black Soulstone", "Soulstone"],
+      "answer": "Black Soulstone"
+    },
+    {
+      "question": "Which act in Diablo II takes place in Hell?",
+      "options": ["Act II", "Act III", "Act IV", "Act V"],
+      "answer": "Act IV"
+    },
+    {
+      "question": "Who is the final boss in Act I of Diablo III?",
+      "options": ["The Skeleton King", "The Butcher", "Maghda", "Belial"],
+      "answer": "The Butcher"
+    },
+    {
+      "question": "What is Diablo's true form called in Diablo III?",
+      "options": ["The Lord of Terror", "The Prime Evil", "The Beast", "The Dark Lord"],
+      "answer": "The Prime Evil"
+    },
+    {
+      "question": "Which of these is NOT a playable mercenary in Diablo II?",
+      "options": ["Rogue", "Barbarian", "Iron Wolf", "Desert Mercenary"],
+      "answer": "Barbarian"
+    },
+    {
+      "question": "What was the original profession of Emperor Hakan II in Diablo III?",
+      "options": ["Noble", "Merchant", "Soldier", "There was no Hakan II, it was Belial in disguise"],
+      "answer": "There was no Hakan II, it was Belial in disguise"
+    },
+    {
+      "question": "What is the highest tier legendary gem in Diablo III?",
+      "options": ["Rank 25", "Rank 50", "Rank 100", "Rank 150"],
+      "answer": "Rank 150"
+    },
+    {
+      "question": "What is the name of the fallen angel of wisdom in Diablo III?",
+      "options": ["Imperius", "Tyrael", "Malthael", "Itherael"],
+      "answer": "Malthael"
+    },
+    {
+      "question": "Which Diablo game introduced the Paragon leveling system?",
+      "options": ["Diablo I", "Diablo II", "Diablo III", "Diablo IV"],
+      "answer": "Diablo III"
+    },
+    {
+      "question": "What is the name of the merchant in Diablo III who sells rare items?",
+      "options": ["Gheed", "Kadala", "Adria", "Covetous Shen"],
+      "answer": "Kadala"
+    },
+    {
+      "question": "Which Diablo game was the first to be released on consoles?",
+      "options": ["Diablo I", "Diablo II", "Diablo III", "Diablo IV"],
+      "answer": "Diablo I"
+    },
+    {
+      "question": "What is the name of the special area in Diablo III with rainbows and unicorns?",
+      "options": ["Happy Land", "Whimsyshire", "Rainbow Level", "Unicorn Kingdom"],
+      "answer": "Whimsyshire"
+    },
+    {
+      "question": "What is the maximum number of players in a Diablo II multiplayer game?",
+      "options": ["4", "6", "8", "12"],
+      "answer": "8"
+    },
+    {
+      "question": "Which of these is NOT a resource used by a class in Diablo III?",
+      "options": ["Fury", "Arcane Power", "Mana", "Blood"],
+      "answer": "Blood"
+    },
+    {
+      "question": "What is the name of the blacksmith in Diablo III?",
+      "options": ["Charsi", "Haedrig Eamon", "Griswold", "Gheed"],
+      "answer": "Haedrig Eamon"
+    },
+    {
+      "question": "What item allows you to reset your skill points in Diablo II?",
+      "options": ["Token of Absolution", "Skill Reset Potion", "Akara's Gift", "Book of Skill"],
+      "answer": "Token of Absolution"
+    },
+    {
+      "question": "Which character shatters the Worldstone in Diablo II: Lord of Destruction?",
+      "options": ["Tyrael", "Marius", "Deckard Cain", "The Dark Wanderer"],
+      "answer": "Tyrael"
+    },
+    {
+      "question": "What is the name of the realm where angels reside in Diablo lore?",
+      "options": ["Silver City", "High Heavens", "Angelic Realm", "Celestial Plane"],
+      "answer": "High Heavens"
+    },
+    {
+      "question": "Which character class in Diablo IV can shapeshift?",
+      "options": ["Barbarian", "Rogue", "Druid", "Sorceress"],
+      "answer": "Druid"
+    },
+    {
+      "question": "Who narrates the opening cinematic of Diablo III?",
+      "options": ["Tyrael", "Deckard Cain", "Adria", "Leah"],
+      "answer": "Deckard Cain"
+    }
+  ]
+}

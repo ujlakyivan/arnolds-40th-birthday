@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "upload-trivia": "node ../scripts/upload-trivia-questions.js"
+    "upload-trivia": "node ../scripts/upload-trivia-questions.js",
+    "upload-diablo": "node ../scripts/upload-diablo-questions.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

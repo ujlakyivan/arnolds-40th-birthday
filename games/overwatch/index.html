@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="../../">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overwatch Trivia Challenge - Arnold's 40th</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="games/game-template.css">
+    <link rel="stylesheet" href="games/overwatch/style.css">
+    
+    <!-- Firebase scripts need to load first -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
+    <script src="scripts/firebase-config.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <button class="back-button">Back</button>
+            <h1>Overwatch Trivia Challenge</h1>
+        </header>
+        <main class="game-content">
+            <!-- Initial game intro screen -->
+            <div class="intro-screen">
+                <div class="placeholder-image overwatch-icon">🦸‍♂️</div>
+                <h2>Test Your Overwatch Knowledge</h2>
+                <div class="instructions">
+                    <p>Answer trivia questions about Overwatch!</p>
+                    <p>Test your knowledge against the clock in this fast-paced trivia game.</p>
+                    <p>The world could always use more heroes with Overwatch knowledge!</p>
+                </div>
+                <button class="start-button">Start Trivia</button>
+            </div>
+            
+            <!-- Loading screen -->
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Connecting to Athena database...</p>
+            </div>
+            
+            <!-- Overwatch trivia game -->
+            <div class="overwatch-trivia-game">
+                <div class="timer">
+                    <div class="timer-fill"></div>
+                </div>
+                <div class="score">Score: <span id="current-score">0</span> / <span id="total-questions">10</span></div>
+                <div class="question-number">Question <span id="current-question-num">1</span> of <span id="total-questions-num">10</span></div>
+                
+                <div class="question-container">
+                    <div class="character-portrait" id="question-image"></div>
+                    <div class="question-text" id="question-text">Who is this character?</div>
+                    <div class="options-container" id="options-container">
+                        <!-- Options will be added dynamically -->
+                    </div>
+                </div>
+                
+                <div class="game-controls">
+                    <button class="next-button" id="next-button" disabled>Next Question</button>
+                </div>
+            </div>
+            
+            <!-- Results screen -->
+            <div class="result-container">
+                <h2 class="result-title">Trivia Complete!</h2>
+                <div class="result-score">Your score: <span id="final-score">0</span> / <span id="final-total">10</span></div>
+                <div class="result-message" id="result-message">Well done, hero!</div>
+                <button class="replay-button">Play Again</button>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Core utils should be loaded before service modules -->
+    <script src="scripts/utils.js"></script>
+    
+    <!-- Service modules -->
+    <script src="scripts/settings-service.js"></script>
+    <script src="scripts/game-completion-service.js"></script>
+    
+    <!-- Make sure these services are explicitly attached to window -->
+    <script>
+        // Ensure services are attached to window object
+        window.SettingsService = SettingsService || {};
+        window.GameCompletionService = GameCompletionService || {};
+        console.log('Services attached to window:', {
+            SettingsService: !!window.SettingsService,
+            GameCompletionService: !!window.GameCompletionService
+        });
+    </script>
+    
+    <!-- Load game scripts last -->
+    <script src="games/game-template.js"></script>
+    <script src="games/overwatch/script.js"></script>
+</body>
+</html>

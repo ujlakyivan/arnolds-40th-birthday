@@ -1,0 +1,323 @@
+/* Overwatch Trivia Game Styles */
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #1a323e;
+    color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #2a3b4c;
+    border-bottom: 2px solid #fa9c1e;
+}
+
+.back-button {
+    background-color: #2a3b4c;
+    border: 1px solid #fa9c1e;
+    color: #f0f0f0;
+}
+
+.back-button:hover {
+    background-color: #3a4b5c;
+}
+
+.game-header h1 {
+    color: #fa9c1e;
+    margin: 0;
+    font-size: 1.5rem;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.game-content {
+    flex-grow: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Game intro screens */
+.intro-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 500px;
+    padding: 2rem;
+}
+
+.placeholder-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #fa9c1e;
+    margin-bottom: 1.5rem;
+    font-size: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a3b4c;
+}
+
+.overwatch-icon {
+    background: linear-gradient(135deg, #fa9c1e, #d65b32);
+}
+
+.instructions {
+    margin: 1.5rem 0;
+}
+
+.instructions p {
+    margin: 0.5rem 0;
+}
+
+.start-button {
+    background-color: #fa9c1e;
+    border: none;
+    color: #1a323e;
+    padding: 0.8rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.start-button:hover {
+    background-color: #f8b24c;
+    transform: translateY(-2px);
+}
+
+/* Loading screen */
+.loading-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-container.active {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #fa9c1e;
+    border-top: 5px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #fa9c1e;
+    font-size: 1.2rem;
+}
+
+/* Trivia Game UI */
+.overwatch-trivia-game {
+    width: 100%;
+    max-width: 600px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+.overwatch-trivia-game.active {
+    display: flex;
+}
+
+.question-container {
+    width: 100%;
+    border: 1px solid #fa9c1e;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #2a3b4c;
+    text-align: center;
+}
+
+.character-portrait {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #fa9c1e;
+    margin-bottom: 15px;
+    background-position: center;
+    background-size: cover;
+    margin: 0 auto 15px;
+}
+
+.question-text {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #f0f0f0;
+}
+
+.options-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.option-button {
+    padding: 12px 15px;
+    border: 2px solid #4a5b6c;
+    border-radius: 4px;
+    background-color: #2a3b4c;
+    color: #f0f0f0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-button:hover:not(:disabled) {
+    background-color: #3a4b5c;
+    border-color: #fa9c1e;
+}
+
+.option-button.correct {
+    background-color: #43b581;
+    border-color: #43b581;
+    color: #fff;
+}
+
+.option-button.incorrect {
+    background-color: #f04747;
+    border-color: #f04747;
+    color: #fff;
+}
+
+.option-button:disabled {
+    cursor: default;
+    opacity: 0.7;
+}
+
+.next-button {
+    padding: 8px 20px;
+    background-color: #fa9c1e;
+    color: #1a323e;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.next-button:hover:not(:disabled) {
+    background-color: #f8b24c;
+}
+
+.next-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.timer {
+    width: 100%;
+    height: 10px;
+    background-color: #4a5b6c;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.timer-fill {
+    height: 100%;
+    width: 100%;
+    background-color: #fa9c1e;
+    transition: width 0.1s linear;
+}
+
+.score, .question-number {
+    margin-bottom: 10px;
+    color: #fa9c1e;
+    font-weight: bold;
+}
+
+/* Results screen */
+.result-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    max-width: 600px;
+    text-align: center;
+}
+
+.result-container.active {
+    display: flex;
+}
+
+.result-title {
+    color: #fa9c1e;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.result-score {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f0f0f0;
+}
+
+.result-message {
+    font-size: 1.2rem;
+    margin: 1rem 0 2rem;
+    color: #f0f0f0;
+}
+
+.replay-button {
+    background-color: #fa9c1e;
+    color: #1a323e;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.replay-button:hover {
+    background-color: #f8b24c;
+    transform: translateY(-2px);
+}
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+    .options-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-header h1 {
+        font-size: 1.2rem;
+    }
+    
+    .question-text {
+        font-size: 1rem;
+    }
+    
+    .start-button, .replay-button {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+    }
+}

@@ -37,9 +37,11 @@
             <h1>Arnold's 40th Birthday Bash!</h1>
             <div id="login-form">
                 <h2>Sign In</h2>
-                <input type="text" id="username" placeholder="Username">
-                <input type="password" id="password" placeholder="Password">
-                <button id="login-button">Login</button>
+                <form id="auth-form" onsubmit="return false;">
+                    <input type="text" id="username" placeholder="Username">
+                    <input type="password" id="password" placeholder="Password">
+                    <button id="login-button" type="button">Login</button>
+                </form>
                 <p class="error-message" id="auth-error"></p>
             </div>
         </div>

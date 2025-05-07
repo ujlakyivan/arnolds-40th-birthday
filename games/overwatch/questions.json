@@ -1,0 +1,514 @@
+{
+  "questions": [
+    {
+      "question": "Who says the voice line 'Heroes never die'?",
+      "options": ["Mercy", "Soldier: 76", "Genji", "Hanzo"],
+      "answer": "Mercy"
+    },
+    {
+      "question": "Which of these heroes is a tank?",
+      "options": ["Reinhardt", "Tracer", "Hanzo", "Mercy"],
+      "answer": "Reinhardt"
+    },
+    {
+      "question": "What is the name of Overwatch's gorilla scientist?",
+      "options": ["Winston", "Hammond", "Grodd", "Kong"],
+      "answer": "Winston"
+    },
+    {
+      "question": "Which hero uses a bow and arrow?",
+      "options": ["Hanzo", "Genji", "Widowmaker", "Ashe"],
+      "answer": "Hanzo"
+    },
+    {
+      "question": "Who is Genji's brother?",
+      "options": ["Hanzo", "McCree", "Reaper", "Zenyatta"],
+      "answer": "Hanzo"
+    },
+    {
+      "question": "What is the name of the character formerly known as McCree?",
+      "options": ["Cassidy", "Gunslinger", "Outlaw", "Deadeye"],
+      "answer": "Cassidy"
+    },
+    {
+      "question": "Which hero says 'It's high noon'?",
+      "options": ["Cassidy", "Ashe", "Soldier: 76", "Reaper"],
+      "answer": "Cassidy"
+    },
+    {
+      "question": "Which map is set in Egypt?",
+      "options": ["Temple of Anubis", "Hanamura", "King's Row", "Route 66"],
+      "answer": "Temple of Anubis"
+    },
+    {
+      "question": "Which character can transform into a turret?",
+      "options": ["Bastion", "Torbjörn", "Symmetra", "Wrecking Ball"],
+      "answer": "Bastion"
+    },
+    {
+      "question": "What is the name of the organization opposing Overwatch?",
+      "options": ["Talon", "Blackwatch", "The Omnics", "Vishkar"],
+      "answer": "Talon"
+    },
+    {
+      "question": "Which hero has the ability 'Pulse Bomb'?",
+      "options": ["Tracer", "Pharah", "Junkrat", "D.Va"],
+      "answer": "Tracer"
+    },
+    {
+      "question": "What is D.Va's real name?",
+      "options": ["Hana Song", "Mei-Ling Zhou", "Amélie Lacroix", "Brigitte Lindholm"],
+      "answer": "Hana Song"
+    },
+    {
+      "question": "Which support hero says 'Experience tranquility'?",
+      "options": ["Zenyatta", "Mercy", "Lúcio", "Moira"],
+      "answer": "Zenyatta"
+    },
+    {
+      "question": "What is Tracer's special ability that allows her to travel through time?",
+      "options": ["Blink", "Recall", "Time Warp", "Chrono Shift"],
+      "answer": "Blink"
+    },
+    {
+      "question": "Which hero can wall-climb as a passive ability?",
+      "options": ["Genji", "Doomfist", "Pharah", "Wrecking Ball"],
+      "answer": "Genji"
+    },
+    {
+      "question": "What is the maximum team size in a standard Overwatch match?",
+      "options": ["6", "5", "8", "4"],
+      "answer": "5"
+    },
+    {
+      "question": "Which hero has the ultimate ability 'Death Blossom'?",
+      "options": ["Reaper", "Soldier: 76", "Pharah", "Junkrat"],
+      "answer": "Reaper"
+    },
+    {
+      "question": "Which hero is known for saying 'Nerf this!'?",
+      "options": ["D.Va", "Mei", "Tracer", "Ashe"],
+      "answer": "D.Va"
+    },
+    {
+      "question": "What is the name of Torbjörn's daughter who is also a hero?",
+      "options": ["Brigitte", "Angela", "Fareeha", "Lena"],
+      "answer": "Brigitte"
+    },
+    {
+      "question": "In Overwatch lore, which two heroes were part of Blackwatch?",
+      "options": ["Reaper and McCree", "Genji and Hanzo", "Soldier: 76 and Ana", "Winston and Tracer"],
+      "answer": "Reaper and McCree"
+    },
+    {
+      "question": "Which Overwatch map features a Hollywood movie studio?",
+      "options": ["Hollywood", "Numbani", "Busan", "Oasis"],
+      "answer": "Hollywood"
+    },
+    {
+      "question": "Which hero has the ability 'Immortality Field'?",
+      "options": ["Baptiste", "Moira", "Mercy", "Ana"],
+      "answer": "Baptiste"
+    },
+    {
+      "question": "Which robot built by Torbjörn went rogue and is now a hero?",
+      "options": ["Bastion", "Echo", "Zenyatta", "Orisa"],
+      "answer": "Bastion"
+    },
+    {
+      "question": "What is the objective of a 'Payload' map in Overwatch?",
+      "options": ["Escort a vehicle to a destination", "Capture control points", "Defend a location for a set time", "Collect items around the map"],
+      "answer": "Escort a vehicle to a destination"
+    },
+    {
+      "question": "Which character is a DJ who uses music to heal his teammates?",
+      "options": ["Lúcio", "Baptiste", "Zenyatta", "Mercy"],
+      "answer": "Lúcio"
+    },
+    {
+      "question": "Which hero has the ability to freeze enemies?",
+      "options": ["Mei", "Sigma", "Zarya", "Symmetra"],
+      "answer": "Mei"
+    },
+    {
+      "question": "What is the name of the hamster hero who pilots a mech ball?",
+      "options": ["Hammond", "Winston", "Jetpack Cat", "Wrecking Ball"],
+      "answer": "Hammond"
+    },
+    {
+      "question": "Which hero says 'Justice rains from above!'?",
+      "options": ["Pharah", "Mercy", "Widowmaker", "Sojourn"],
+      "answer": "Pharah"
+    },
+    {
+      "question": "Which support hero can put enemies to sleep?",
+      "options": ["Ana", "Mercy", "Kiriko", "Lifeweaver"],
+      "answer": "Ana"
+    },
+    {
+      "question": "What is Tracer's real name?",
+      "options": ["Lena Oxton", "Emily Watson", "Angela Ziegler", "Amélie Lacroix"],
+      "answer": "Lena Oxton"
+    },
+    {
+      "question": "Who says the voice line 'Heroes never die'?",
+      "options": ["Mercy", "Soldier: 76", "Ana", "Zenyatta"],
+      "answer": "Mercy"
+    },
+    {
+      "question": "Which hero can climb walls as a passive ability?",
+      "options": ["Genji", "Hanzo", "Widowmaker", "Lucio"],
+      "answer": "Hanzo"
+    },
+    {
+      "question": "What was Soldier: 76's real name?",
+      "options": ["Jack Morrison", "Gabriel Reyes", "John Francis", "Vincent Adams"],
+      "answer": "Jack Morrison"
+    },
+    {
+      "question": "Which hero was a member of Blackwatch?",
+      "options": ["Reaper", "McCree", "Moira", "All of the above"],
+      "answer": "All of the above"
+    },
+    {
+      "question": "Which hero has the ability 'Guardian Angel'?",
+      "options": ["Ana", "Pharah", "Mercy", "Brigitte"],
+      "answer": "Mercy"
+    },
+    {
+      "question": "What is Reinhardt's ultimate ability called?",
+      "options": ["Earthshatter", "Graviton Surge", "Meteor Strike", "Rocket Punch"],
+      "answer": "Earthshatter"
+    },
+    {
+      "question": "Which robot fought in the Omnic Crisis?",
+      "options": ["Echo", "Zenyatta", "Bastion", "Orisa"],
+      "answer": "Bastion"
+    },
+    {
+      "question": "Which hero says 'Ryūjin no ken wo kurae!' during their ultimate?",
+      "options": ["Hanzo", "Genji", "Kiriko", "Mei"],
+      "answer": "Genji"
+    },
+    {
+      "question": "What organization was Tracer a part of?",
+      "options": ["Talon", "Overwatch", "Blackwatch", "Vishkar"],
+      "answer": "Overwatch"
+    },
+    {
+      "question": "Which hero was genetically enhanced to become a super soldier?",
+      "options": ["Reaper", "Soldier: 76", "Reinhardt", "Winston"],
+      "answer": "Soldier: 76"
+    },
+    {
+      "question": "Who is Fareeha Amari's mother?",
+      "options": ["Mercy", "Moira", "Ana", "Ashe"],
+      "answer": "Ana"
+    },
+    {
+      "question": "Which hero has the ability to hack enemies?",
+      "options": ["Echo", "Sombra", "D.Va", "Winston"],
+      "answer": "Sombra"
+    },
+    {
+      "question": "What is the name of Torbjörn's turret ability?",
+      "options": ["Deploy Turret", "Sentry", "Build Turret", "Deploy Sentry"],
+      "answer": "Deploy Turret"
+    },
+    {
+      "question": "Which hero was a professional gamer before joining Overwatch?",
+      "options": ["Lucio", "D.Va", "Sombra", "Zarya"],
+      "answer": "D.Va"
+    },
+    {
+      "question": "Which hero uses a bow as their primary weapon?",
+      "options": ["Widowmaker", "Ashe", "Sojourn", "Hanzo"],
+      "answer": "Hanzo"
+    },
+    {
+      "question": "What type of healer is Zenyatta classified as?",
+      "options": ["Main Healer", "Off Healer", "Flex Healer", "Area Healer"],
+      "answer": "Off Healer"
+    },
+    {
+      "question": "Which hero cannot self-heal through their abilities?",
+      "options": ["Soldier: 76", "Mei", "Roadhog", "Cassidy"],
+      "answer": "Cassidy"
+    },
+    {
+      "question": "Which hero has the 'Graviton Surge' ultimate?",
+      "options": ["Sigma", "Zarya", "Orisa", "Wrecking Ball"],
+      "answer": "Zarya"
+    },
+    {
+      "question": "What was McCree's name changed to?",
+      "options": ["Cassidy", "Mercer", "Winston", "Joel"],
+      "answer": "Cassidy"
+    },
+    {
+      "question": "Which hero runs Lúcio's rival company?",
+      "options": ["Sombra", "Symmetra", "Moira", "Mercy"],
+      "answer": "Symmetra"
+    },
+    {
+      "question": "Which hero is a climatologist?",
+      "options": ["Winston", "Mei", "Moira", "Sigma"],
+      "answer": "Mei"
+    },
+    {
+      "question": "What is Wrecking Ball's real name?",
+      "options": ["Winston", "Hammond", "Rodney", "Harold"],
+      "answer": "Hammond"
+    },
+    {
+      "question": "Which hero has a passive ability that lets them see injured enemies through walls?",
+      "options": ["Ana", "Mercy", "Moira", "Kiriko"],
+      "answer": "Mercy"
+    },
+    {
+      "question": "Which hero was the leader of Null Sector?",
+      "options": ["Zenyatta", "Echo", "Ramattra", "Bastion"],
+      "answer": "Ramattra"
+    },
+    {
+      "question": "What is Widowmaker's real name?",
+      "options": ["Amélie Lacroix", "Angela Ziegler", "Olivia Colomar", "Fareeha Amari"],
+      "answer": "Amélie Lacroix"
+    },
+    {
+      "question": "Which hero says 'Love, D.Va!' when using an emote?",
+      "options": ["D.Va", "Mercy", "Tracer", "Mei"],
+      "answer": "D.Va"
+    },
+    {
+      "question": "Which hero says 'Justice rains from above!' during their ultimate?",
+      "options": ["Ana", "Pharah", "Mercy", "Echo"],
+      "answer": "Pharah"
+    },
+    {
+      "question": "Which hero has 'Sleep Dart' as an ability?",
+      "options": ["Widowmaker", "Ana", "Ashe", "Sojourn"],
+      "answer": "Ana"
+    },
+    {
+      "question": "What is the name of Cassidy's ultimate ability?",
+      "options": ["High Noon", "Deadeye", "Peacekeeper", "Fan the Hammer"],
+      "answer": "Deadeye"
+    },
+    {
+      "question": "What organization is Reaper associated with?",
+      "options": ["Overwatch", "Blackwatch", "Talon", "Vishkar"],
+      "answer": "Talon"
+    },
+    {
+      "question": "Which hero can teleport to their placed translocator?",
+      "options": ["Tracer", "Symmetra", "Sombra", "Kiriko"],
+      "answer": "Sombra"
+    },
+    {
+      "question": "What is Zenyatta's ultimate called?",
+      "options": ["Transcendence", "Harmony", "Discord", "Enlightenment"],
+      "answer": "Transcendence"
+    },
+    {
+      "question": "Which hero has 'Sonic Arrow' as an ability?",
+      "options": ["Genji", "Hanzo", "Widowmaker", "Ana"],
+      "answer": "Hanzo"
+    },
+    {
+      "question": "Which hero was a DJ before joining Overwatch?",
+      "options": ["Lúcio", "D.Va", "Baptiste", "Sigma"],
+      "answer": "Lúcio"
+    },
+    {
+      "question": "Which hero has a shield generator as an ultimate ability in the original Overwatch?",
+      "options": ["Winston", "Reinhardt", "Symmetra", "Brigitte"],
+      "answer": "Symmetra"
+    },
+    {
+      "question": "Which hero has the ability to fly indefinitely?",
+      "options": ["Pharah", "Mercy", "Echo", "D.Va"],
+      "answer": "Echo"
+    },
+    {
+      "question": "Who is the founder of Overwatch?",
+      "options": ["Ana Amari", "Jack Morrison", "Winston", "Gabriel Reyes"],
+      "answer": "Jack Morrison"
+    },
+    {
+      "question": "Which hero has an ability called 'Fade'?",
+      "options": ["Reaper", "Moira", "Sombra", "Tracer"],
+      "answer": "Moira"
+    },
+    {
+      "question": "What is the name of Torbjörn's daughter?",
+      "options": ["Brigitte", "Angela", "Fareeha", "Sombra"],
+      "answer": "Brigitte"
+    },
+    {
+      "question": "What is Junkrat's real name?",
+      "options": ["Jamie Fawkes", "Mako Rutledge", "Jamison Fawkes", "Jake Morrison"],
+      "answer": "Jamison Fawkes"
+    },
+    {
+      "question": "Which hero has the ability 'Chain Hook'?",
+      "options": ["Reinhardt", "Roadhog", "Junker Queen", "Winston"],
+      "answer": "Roadhog"
+    },
+    {
+      "question": "Which hero was a scientist on the moon?",
+      "options": ["Sigma", "Winston", "Hammond", "Moira"],
+      "answer": "Winston"
+    },
+    {
+      "question": "Who says 'Nerf this!' during their ultimate?",
+      "options": ["Tracer", "Mei", "D.Va", "Ashe"],
+      "answer": "D.Va"
+    },
+    {
+      "question": "Which hero is Tracer's significant other?",
+      "options": ["Winston", "Emily", "Jack Morrison", "Lena"],
+      "answer": "Emily"
+    },
+    {
+      "question": "What is the name of Ana's ultimate ability?",
+      "options": ["Supercharger", "Nano Boost", "Rally", "Valkyrie"],
+      "answer": "Nano Boost"
+    },
+    {
+      "question": "Which hero has the 'Fortify' ability?",
+      "options": ["Reinhardt", "Sigma", "Zarya", "Orisa"],
+      "answer": "Orisa"
+    },
+    {
+      "question": "Which hero has the ability to resurrect dead teammates?",
+      "options": ["Ana", "Moira", "Kiriko", "Mercy"],
+      "answer": "Mercy"
+    },
+    {
+      "question": "What is Soldier: 76's ultimate ability called?",
+      "options": ["Deadeye", "Tactical Visor", "Barrage", "Death Blossom"],
+      "answer": "Tactical Visor"
+    },
+    {
+      "question": "Which hero can create ice walls?",
+      "options": ["Mei", "Sigma", "Zarya", "Symmetra"],
+      "answer": "Mei"
+    },
+    {
+      "question": "What is Lúcio's ultimate ability called?",
+      "options": ["Beat Drop", "Sound Barrier", "Amp It Up", "Crossfade"],
+      "answer": "Sound Barrier"
+    },
+    {
+      "question": "What is Sombra's real name?",
+      "options": ["Olivia Colomar", "Alejandra Reyes", "Ana Santos", "Maria Cruz"],
+      "answer": "Olivia Colomar"
+    },
+    {
+      "question": "Which hero has 'Immortality Field' as an ability?",
+      "options": ["Mercy", "Zenyatta", "Baptiste", "Moira"],
+      "answer": "Baptiste"
+    },
+    {
+      "question": "Which hero is associated with the phrase 'Catch phrase!'?",
+      "options": ["Tracer", "Reinhardt", "Junkrat", "Winston"],
+      "answer": "Reinhardt"
+    },
+    {
+      "question": "Which hero has a pet named 'Bob'?",
+      "options": ["Cassidy", "Ashe", "Torbjörn", "Winston"],
+      "answer": "Ashe"
+    },
+    {
+      "question": "Which hero was designed by Efi Oladele?",
+      "options": ["Echo", "Bastion", "Orisa", "Zenyatta"],
+      "answer": "Orisa"
+    },
+    {
+      "question": "Which hero can double jump as a passive ability?",
+      "options": ["Genji", "Hanzo", "Lúcio", "Tracer"],
+      "answer": "Genji"
+    },
+    {
+      "question": "What is the name of Reinhardt's charge ability?",
+      "options": ["Rocket Charge", "Shield Charge", "Charge", "Barrier Dash"],
+      "answer": "Charge"
+    },
+    {
+      "question": "Which hero has 'Biotic Grasp' as an ability?",
+      "options": ["Ana", "Mercy", "Moira", "Baptiste"],
+      "answer": "Moira"
+    },
+    {
+      "question": "What is Roadhog's ultimate ability called?",
+      "options": ["Chain Hook", "Scrap Gun", "Take a Breather", "Whole Hog"],
+      "answer": "Whole Hog"
+    },
+    {
+      "question": "Which hero says 'Fire in the hole!' during their ultimate?",
+      "options": ["Ashe", "Junkrat", "Torbjörn", "Cassidy"],
+      "answer": "Junkrat"
+    },
+    {
+      "question": "What is Symmetra's primary weapon called?",
+      "options": ["Photon Projector", "Light Beam", "Vishkar Ray", "Hardlight Projector"],
+      "answer": "Photon Projector"
+    },
+    {
+      "question": "Which hero can eat ultimates with their defensive ability?",
+      "options": ["Sigma", "Zarya", "D.Va", "Orisa"],
+      "answer": "D.Va"
+    },
+    {
+      "question": "Which hero has 'Restore' as an ability in Overwatch 2?",
+      "options": ["Mercy", "Ana", "Kiriko", "Lifeweaver"],
+      "answer": "Lifeweaver"
+    },
+    {
+      "question": "What is Winston's ultimate ability called?",
+      "options": ["Primal Rage", "Beast Mode", "Gorilla Warfare", "Animal Instinct"],
+      "answer": "Primal Rage"
+    },
+    {
+      "question": "Which hero has 'Railgun' as a primary weapon?",
+      "options": ["Widowmaker", "Ashe", "Sojourn", "Soldier: 76"],
+      "answer": "Sojourn"
+    },
+    {
+      "question": "Who is the youngest hero in Overwatch?",
+      "options": ["D.Va", "Tracer", "Echo", "Orisa"],
+      "answer": "D.Va"
+    },
+    {
+      "question": "Which hero has 'Protection Suzu' as an ability?",
+      "options": ["Mercy", "Baptiste", "Ana", "Kiriko"],
+      "answer": "Kiriko"
+    },
+    {
+      "question": "What is Sigma's real name?",
+      "options": ["Siebren de Kuiper", "Harold Winston", "Akande Ogundimu", "Jean-Baptiste Augustin"],
+      "answer": "Siebren de Kuiper"
+    },
+    {
+      "question": "Which hero has the 'Accretion' ability?",
+      "options": ["Zarya", "Orisa", "Reinhardt", "Sigma"],
+      "answer": "Sigma"
+    },
+    {
+      "question": "What is Ashe's dynamite ability called?",
+      "options": ["TNT", "Dynamite", "C4", "Explosive"],
+      "answer": "Dynamite"
+    },
+    {
+      "question": "Which hero says 'Experience tranquility' during their ultimate?",
+      "options": ["Genji", "Zenyatta", "Kiriko", "Ramattra"],
+      "answer": "Zenyatta"
+    },
+    {
+      "question": "Which hero has an ability called 'Blink'?",
+      "options": ["Reaper", "Genji", "Tracer", "Sombra"],
+      "answer": "Tracer"
+    }
+  ]
+}

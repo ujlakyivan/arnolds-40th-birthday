@@ -14,7 +14,9 @@ class Games {
             { id: 7, title: 'Birthday Racer', image: 'racer.png', path: 'games/racer/', emoji: '🏎️' },
             { id: 8, title: 'Gift Hunt', image: 'hunt.png', path: 'games/hunt/', emoji: '🎁' },
             { id: 9, title: 'Balloon Pop', image: 'balloon.png', path: 'games/balloon/', emoji: '🎈' },
-            { id: 10, title: 'Cake Builder', image: 'cake.png', path: 'games/cake/', emoji: '🎂' }
+            { id: 10, title: 'Cake Builder', image: 'cake.png', path: 'games/cake/', emoji: '🎂' },
+            { id: 11, title: 'Diablo Trivia', image: 'diablo.png', path: 'games/diablo/', emoji: '🔥' },
+            { id: 12, title: 'Overwatch Trivia', image: 'overwatch.png', path: 'games/overwatch/', emoji: '🦸' }
         ];
         
         // Cache DOM elements
